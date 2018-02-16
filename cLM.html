@@ -1,0 +1,75 @@
+<div id="sidebar" class="sidebar">
+	<!-- Nav tabs -->
+	<div class="sidebar-tabs">
+		<ul role="tablist">
+			<li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+			<li><a href="#profile" role="tab"><i class="fa fa-user"></i></a></li>
+			<li class="disabled"><a href="#messages" role="tab"><i class="fa fa-envelope"></i></a></li>
+			<li><a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank"><i class="fa fa-github"></i></a></li>
+		</ul>
+
+		<ul role="tablist">
+			<li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+		</ul>
+	</div>
+
+	<!-- Tab panes -->
+	<div class="sidebar-content">
+		<div class="sidebar-pane active" id="home">
+			<h1 class="sidebar-header">
+				Import file
+				<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+			</h1>
+			<h2>Check Location to Merge!</h2>
+			<h3>What is it? How it works?</h3>
+			This app is design to find among your checklist which has a location not merged to a hotspot and suggest you nearby hotspot<br> 
+			<h3>Generate your eBird File</h3>
+			First thing is to get your data in .csv file
+			<a role="button" class="btn btn-primary" href="https://ebird.org/downloadMyData" target="_blank">Download your data in eBird</a>
+			<h3>Import your eBird File</h3>
+			<p>Import your <code>MyEBirdData.csv</code> using the upload file below. Note that the file is never send to our server, only used in your browser.</p>
+			<label class="custom-file" style="width: 100%;">
+				<input type="file" id="uploadMyEBirdData" class="custom-file-input" accept=".csv">
+				<span class="custom-file-control"></span>
+			</label>
+			<h3 id="loadingtitle"></h3>
+			<div class="progress" id="MyPg" style="display:none;">
+				<div id="MyPgBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">0%</div>
+			</div>
+		</div>
+
+		<div class="sidebar-pane" id="profile">
+			<h1 class="sidebar-header">Region download<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" class=""><span class="glyphicon glyphicon-folder-close">
+						</span>Content</a>
+					</h4>
+				</div>
+				<div id="collapseOne" class="panel-collapse in" style="height: auto;">
+					<ul class="list-group">
+						<li class="list-group-item"><span class="glyphicon glyphicon-pencil text-primary"></span><a href="http://fb.com/moinakbarali">Articles</a></li>
+
+						<li class="list-group-item"><span class="glyphicon glyphicon-flash text-success"></span><a href="http://fb.com/moinakbarali">News</a></li>
+
+						<li class="list-group-item"><span class="glyphicon glyphicon-file text-info"></span><a href="http://fb.com/moinakbarali">Newsletters</a></li>
+
+						<li class="list-group-item"> <span class="glyphicon glyphicon-comment text-success"></span><a href="http://fb.com/moinakbarali">Comments</a><span class="badge">42</span></li>
+
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="sidebar-pane" id="messages">
+			<h1 class="sidebar-header">Messages<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+		</div>
+
+		<div class="sidebar-pane" id="settings">
+			<h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+		</div>
+	</div>
+</div>
+
+<div id="map1" class="sidebar-map"></div>

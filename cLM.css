@@ -1,0 +1,176 @@
+/*GENEAL STRUCTURE*/
+html{
+	margin-top:0!important;
+	overflow-y: hidden !important;
+}
+html.wait, html.wait * { cursor: wait !important; }
+body{
+	overflow: hidden;
+}
+body.body_blank.admin-bar{
+	top:0px!important;
+}
+img{
+	margin:auto;
+}
+#wpadminbar{
+	display:none;
+}
+
+#wrapper{
+	max-width:100%!important;
+}
+#main{
+	padding:0!important;
+}
+html, body, #wrapper, #main, .fusion-row, #content, .page, .post-content, #yourForm, .page-table, .page-row, .main, #map1{
+	height: 100%;
+}
+.rich-snippet-hidden{
+	display:none;
+}
+
+
+/* SideBAr*/
+@media (min-width: 1200px){
+	.sidebar {
+		width: 490px ;
+	}
+	.sidebar-left ~ .sidebar-map .leaflet-left {
+		left: 500px ;
+	}
+}
+@media (max-width: 1199px) and (min-width: 992px){
+	.sidebar {
+		width: 350px ;
+	}
+	.sidebar-pane {
+		min-width: initial ;
+	}
+	.sidebar-left ~ .sidebar-map .leaflet-left {
+		left: 360px ;
+	}
+}
+@media (max-width: 991px) and (min-width: 768px){
+	.sidebar {
+		width: 350px ;
+	}
+	.sidebar-pane {
+		min-width: initial ;
+	}
+	.sidebar-left ~ .sidebar-map .leaflet-left {
+		left: 360px ;
+	}
+}
+@media (max-width: 768px){
+	#map1{
+		width: calc(100% - 40px);
+	}
+}
+.sidebar-header{
+	line-height: 40px !important;
+    font-size: 14.4pt !important;
+    color: #fff !important;
+}
+/*.sidebar-pane{
+	padding:0px;
+	height: 100%;
+	overflow: hidden;
+}
+.sidebar-header{
+	margin: -5px;
+}
+.sidebar-body{
+	padding:10px 15px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: calc(100% - 50px);
+}
+.sidebar-tabs>li, .sidebar-tabs>ul>li{
+	overflow: initial;
+}
+*/
+
+
+/* PROGRESS BAR*/
+.progress{
+	float: inherit !important; 
+	width: inherit !important;
+	background-color: #eceeef !important;
+} 
+
+.progress-bar{
+	background-color: #0275d8 !important;
+	margin-bottom: inherit !important;
+	height: 30px !important;
+}
+#MyPg{
+	margin-top: 40px;
+	    height: initial;
+}
+#MyPgBar{
+	width :0%;
+	line-height: 30px;
+	font-size: initial;
+}
+
+/*ICON*/
+.marker-cluster{
+	margin-left: -20px;
+	margin-top: -20px;	
+	width: 40px; 
+	height: 40px;
+}
+
+ /* LIST 
+.list-group.list-group-root {
+    padding: 0;
+    overflow: hidden;
+}
+
+.list-group.list-group-root .list-group {
+    margin-bottom: 0;
+}
+
+.list-group.list-group-root .list-group-item {
+    border-radius: 0;
+    border-width: 1px 0 0 0;
+}
+
+.list-group.list-group-root > .list-group-item:first-child {
+    border-top-width: 0;
+}
+*/
+.list-group.list-group-root > .list-group > .list-group-item {
+    padding-left: 45px;
+}
+.list-group-item {
+    padding: 6px 10px;
+}
+.list-group-item .glyphicon {
+    margin-right: 5px;
+}
+.badge{
+	float:right;
+}
+.rcl-download{
+	float:right;
+	padding-left: 10px;
+}
+.fa-chevron{
+	padding-right: 5px;
+}
+.list-crl-a:hover{
+	text-decoration: none;
+}
+.fa-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+#FindLocationHotspot{
+	margin: 20px auto;
+    display: flex;
+}
+#messages-table tr{
+	cursor: pointer;
+}
