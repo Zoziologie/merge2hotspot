@@ -122,6 +122,7 @@ html, body, #wrapper, #main, .fusion-row, #content, .page, .post-content, #yourF
 	height: 40px;
 }
 
+
  /* LIST 
 .list-group.list-group-root {
     padding: 0;
@@ -167,10 +168,13 @@ html, body, #wrapper, #main, .fusion-row, #content, .page, .post-content, #yourF
   opacity: 0.6;
   cursor: not-allowed;
 }
-#FindLocationHotspot{
+.buttoncenter{
 	margin: 20px auto;
     display: flex;
 }
 #messages-table tr{
 	cursor: pointer;
+}
+#list-countrregionlist{
+    margin: 0px -10px;
 }

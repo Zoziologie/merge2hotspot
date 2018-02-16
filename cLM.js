@@ -17,7 +17,17 @@ jQuery(document).ready(function() {
 	L.MakiMarkers.accessToken = token.mapbox;
 	sidebar = L.control.sidebar('sidebar').addTo(map);
 
-	makersHotspot = L.markerClusterGroup({	showCoverageOnHover:0,maxClusterRadius:20});
+	makersHotspot = L.markerClusterGroup({	
+		showCoverageOnHover:1, 
+		maxClusterRadius:50,
+		iconCreateFunction: function(cluster) {
+			return L.icon({
+				iconUrl: "https://zoziologie.raphaelnussbaumer.com/wp-content/plugins/ChecklistLoctionToMerge/hotspot-icon-hotspot-plus_small.png",
+				iconAnchor: [12, 30],
+				popupAnchor: [0, -12],
+			})
+		}
+	});
 	makersLocNoHot = L.featureGroup();
 	control.addOverlay(makersHotspot.addTo(map),'eBird Hotspot')
 
@@ -43,50 +53,56 @@ jQuery(document).ready(function() {
 
 function FindLocationHotspot(){
 	if (downloaded.length==0){
-			alert('Download first some hotspot')
-			return;
-		}
-		sidebar.open('messages');
-		makersLocNoHot.clearLayers()
-		locNoHot=[];
-		control.removeLayer(makersLocNoHot)
-		loc.forEach(function(l){
-			var t1 = downloaded.indexOf(l.region)
-			var t2 = downloaded.indexOf(l.region.split('-')[0])
-			if (t1>-1 | t2>-1){
-				var dist = hotspot.map(h => distance(parseFloat(l.Latitude), parseFloat(l.Longitude), h.lat, h.lng) )
-				var mm = dist.reduce( (acc,curV, curI) => acc[0] > curV ? [curV, curI] : acc  ,[100000,undefined] )
-				if (hotspot[mm[1]].locName == l.Location) {
-					console.log(hotspot[mm[1]])
-				} else {
-					var pop = '<b>Name:</b> '+l.Location+' ('+l.region+')<br><b>Checklists: </b>'+ l.checklists.map( val => '<a href="https://ebird.org/view/checklist/'+val+'" target="_blank">'+val+'</a>' ).join(", ");
-					pop = l.checklists.length>2 ? pop+'<br><a href="https://ebird.org/MyEBird?cmd=manageLocations" title="search for your location name in the search box. You need to be login in eBird">Change All locations at once</a>' : pop;
-					var m = L.marker([parseFloat(l.Latitude), parseFloat(l.Longitude)]).bindPopup(pop);
-					makersLocNoHot.addLayer(m);
-					var link = L.polyline([[parseFloat(l.Latitude), parseFloat(l.Longitude)],[hotspot[mm[1]].lat, hotspot[mm[1]].lng]], {color: 'red'})
-					makersLocNoHot.addLayer(link);
-					var ll = l;
-					ll.distance = mm[0];
-					ll.nearbyHot = hotspot[mm[1]];
-					ll.marker = m;
-					ll.link = link;
-					locNoHot.push(ll);
-				}
+		alert('Download first some hotspot')
+		return;
+	}
+	sidebar.open('messages');
+	makersLocNoHot.clearLayers()
+	locNoHot=[];
+	control.removeLayer(makersLocNoHot)
+	loc.forEach(function(l){
+		var t1 = downloaded.indexOf(l.region)
+		var t2 = downloaded.indexOf(l.region.split('-')[0])
+		if (t1>-1 | t2>-1){
+			var dist = hotspot.map(h => distance(parseFloat(l.Latitude), parseFloat(l.Longitude), h.lat, h.lng) )
+			var mm = dist.reduce( (acc,curV, curI) => acc[0] > curV ? [curV, curI] : acc  ,[100000,undefined] )
+			if (hotspot[mm[1]].locName == l.Location) {
+				console.log(hotspot[mm[1]])
+			} else {
+				var pop = '<b>Name:</b> '+l.Location+' ('+l.region+')<br><b>Checklists: </b>'+ l.checklists.map( val => '<a href="https://ebird.org/view/checklist/'+val+'" target="_blank">'+val+'</a>' ).join(", ");
+				pop = l.checklists.length>2 ? pop+'<br><a href="https://ebird.org/MyEBird?cmd=manageLocations" title="search for your location name in the search box. You need to be login in eBird">Change All locations at once</a>' : pop;
+				var m = L.marker([parseFloat(l.Latitude), parseFloat(l.Longitude)],{
+					icon:L.icon({
+						iconUrl: "https://zoziologie.raphaelnussbaumer.com/wp-content/plugins/ChecklistLoctionToMerge/hotspot-icon_perso_small.png",
+						iconAnchor: [12, 30],
+						popupAnchor: [0, -12],
+					})
+				}).bindPopup(pop);
+				makersLocNoHot.addLayer(m);
+				var link = L.polyline([[parseFloat(l.Latitude), parseFloat(l.Longitude)],[hotspot[mm[1]].lat, hotspot[mm[1]].lng]], {color: 'red'})
+				makersLocNoHot.addLayer(link);
+				var ll = l;
+				ll.distance = mm[0];
+				ll.nearbyHot = hotspot[mm[1]];
+				ll.marker = m;
+				ll.link = link;
+				locNoHot.push(ll);
 			}
-		})
-		control.addOverlay(makersLocNoHot.addTo(map),'Locations without hotspot')
-		map.fitBounds(makersLocNoHot.getBounds());
-		makersLoc.removeFrom(map)
+		}
+	})
+	control.addOverlay(makersLocNoHot.addTo(map),'Locations without hotspot')
+	map.fitBounds(makersLocNoHot.getBounds(), {paddingTopLeft: [500, 0]});
+	makersLoc.removeFrom(map)
 
 
-		var tableRef = document.getElementById('messages-table');
-		locNoHot = locNoHot.sort( (l1,l2) => l1.distance<l2.distance ? -1 : (l1.distance>l2.distance ? 1:0) )
-		locNoHot.forEach(function(l){
-			var newRow = tableRef.insertRow(tableRef.rows.length)
-			newRow.setAttribute('onclick', 'map.setView(new L.LatLng('+l.Latitude+', +'+l.Longitude+'),16)',0);
-			newRow.insertCell(0).appendChild(document.createTextNode(l.Location ));
-			newRow.insertCell(1).appendChild(document.createTextNode( l.nearbyHot.locName+' ('+Math.round(l.distance*1000).toString()+'m)'));
-		})
+	var tableRef = document.getElementById('messages-table');
+	locNoHot = locNoHot.sort( (l1,l2) => l1.distance<l2.distance ? -1 : (l1.distance>l2.distance ? 1:0) )
+	locNoHot.forEach(function(l){
+		var newRow = tableRef.insertRow(tableRef.rows.length)
+		newRow.setAttribute('onclick', 'map.setView(new L.LatLng('+l.Latitude+', +'+l.Longitude+'),16)',0);
+		newRow.insertCell(0).appendChild(document.createTextNode(l.Location ));
+		newRow.insertCell(1).appendChild(document.createTextNode( l.nearbyHot.locName+' ('+Math.round(l.distance*1000).toString()+'m)'));
+	})
 }
 
 function distance(lat1, lon1, lat2, lon2) {
@@ -145,15 +161,29 @@ function processFile( file, size ){
 					}
 				})
 
-				makersLoc = L.markerClusterGroup({	showCoverageOnHover:0});
+				makersLoc = L.markerClusterGroup({	
+					showCoverageOnHover:1,
+					iconCreateFunction: function(e){
+						var t=e.getAllChildMarkers().reduce( (c,m) => c+m.checklists.length,0)
+						var i=" marker-cluster-"
+						i+=10>t?"small":100>t?"medium":"large"
+						t = t<1000 ? t : Math.round(t/1000)+'K'
+						var divi = L.divIcon({
+							html:"<div><span>"+t+"</span></div>",
+							className:"marker-cluster"+i,
+							iconSize: L.Point(40,40),
+						})
+						return divi
+					}
+				});
 
 				loc.forEach(function(l){
-					//pop = '<b>'+l.Location +'</b><br><b>Species:</b> '+ l.Spe.join(', ')+'<br><b>Checklists:</b> '+l.List.map( id => '<a href="https://ebird.org/view/checklist/'+id+'" target="_blank">'+id+'</a>' ).join(", ");
+					var pop = '<b>Name:</b> '+l.Location+' ('+l.region+')<br><b>Checklists: </b>'+ l.checklists.map( val => '<a href="https://ebird.org/view/checklist/'+val+'" target="_blank">'+val+'</a>' ).join(", ");
 					var m = L.marker([parseFloat(l.Latitude), parseFloat(l.Longitude)],{
 						icon:L.MakiMarkers.icon({
 							icon: l.checklists.length < 100  ? l.checklists.length : (l.checklists.length < 1000 ? 'c' : 'k' ),
 						})
-					}).on('click', function(e){console.log(e)});
+					}).bindPopup(pop);
 					m.checklists = l.checklists;
 					m.name=l.Location;
 					m.region = l.region;
@@ -162,7 +192,7 @@ function processFile( file, size ){
 				})
 
 				control.addOverlay(makersLoc.addTo(map),'All Locations')
-				map.fitBounds(makersLoc.getBounds());
+				map.fitBounds(makersLoc.getBounds(), {paddingTopLeft: [500, 0]});
 
 				ListRegion(loc)
 
@@ -185,6 +215,13 @@ ListRegion = function(loc){
 		}
 		return acc;
 	}, [] );
+
+	region = region.sort(function(a, b){
+		if(a.name < b.name) return -1;
+		if(a.name > b.name) return 1;
+		return 0;
+	})
+
 	var country = region.reduce( function(acc, cur){
 		var ind = acc.findIndex( x => x.name == cur.name.split('-')[0])
 		if (ind <0 ){
@@ -197,11 +234,11 @@ ListRegion = function(loc){
 
 
 
-	country.sort().forEach(function(c){
-		html = '<div class="list-group-item "><a href="#list-country-'+c.name+'" class="list-crl-a" data-toggle="collapse"><i class="fas fa-chevron fa-chevron-right"></i>'+c.name+'</a><a href="#" class="rcl-download" id="rcl-download-'+c.name+'"><i class="fas fa-download" ></a></i><span class="badge badge-primary badge-pill">'+c.count.toString()+'</span></div>\
+	country.forEach(function(c){
+		html = '<div class="list-group-item "><a href="#list-country-'+c.name+'" class="list-crl-a" data-toggle="collapse"><i class="fas fa-chevron fa-chevron-right"></i>'+c.name+'</a><a href="#" class="rcl-download" id="rcl-download-'+c.name+'"><i class="fas fa-download" ></i></a><span class="badge badge-primary badge-pill">'+c.count.toString()+'</span></div>\
 		<div class="list-group collapse" id="list-country-'+c.name+'"></div>';
 		jQuery('#list-countrregionlist').append(html)
-		region.sort().forEach(function(r){
+		region.forEach(function(r){
 			if(r.name.split('-')[0]==c.name){
 				html = '<div class="list-group-item">'+r.name+'\
 				<a href="#" class="rcl-download" id="rcl-download-'+r.name+'"><i class="fas fa-download"></i></a>\
@@ -243,9 +280,9 @@ ListRegion = function(loc){
 							h=d;
 							var m = L.marker([parseFloat(d.lat), parseFloat(d.lng)],{
 								icon:L.icon({
-									iconUrl: "https://zoziologie.raphaelnussbaumer.com/wp-content/plugins/improvedBiolovisionVisualisation/hotspot-icon-hotspot.png",
-									iconAnchor: [11, 27],
-									popupAnchor: [0, -19],
+									iconUrl: "https://zoziologie.raphaelnussbaumer.com/wp-content/plugins/ChecklistLoctionToMerge/hotspot-icon-hotspot_small.png",
+									iconAnchor: [12, 30],
+									popupAnchor: [0, -12],
 								})
 							}).bindPopup("<a href='https://ebird.org/hotspot/"+d.locId+"' target='_blank'>"+d.locName+"</a>");
 							m.locName = d.locName;
@@ -255,6 +292,7 @@ ListRegion = function(loc){
 							hotspot.push(h);
 						}
 					})
+					map.fitBounds(makersHotspot.getBounds(), {paddingTopLeft: [500, 0]});
 				})		
 			}
 		});
