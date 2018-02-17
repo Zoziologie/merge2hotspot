@@ -1,4 +1,4 @@
-# ChecklistLoctionToMerge
+# Merge2Hotspot
 
 Finding checklist's location which are not associated with a hotspot, list them and suggest to change the location to nearby hotspot
 
