@@ -236,7 +236,7 @@ ListRegion = function(loc){
 	}, [] )
 
 	country.forEach(function(c){
-		html = '<div class="list-group-item "><a href="#list-country-'+c.locID+'" class="list-crl-a" data-toggle="collapse"><i class="fas fa-chevron fa-chevron-right"></i>'+c.name+'</a><a href="#" class="rcl-download" id="rcl-download-'+c.lodID+'"><i class="fas fa-download" ></i></a><span class="badge badge-primary badge-pill">'+c.count.toString()+'</span></div>\
+		html = '<div class="list-group-item "><a href="#list-country-'+c.locID+'" class="list-crl-a" data-toggle="collapse"><i class="fas fa-chevron fa-chevron-right"></i>'+c.name+'</a><a href="#" class="rcl-download" id="rcl-download-'+c.locID+'"><i class="fas fa-download" ></i></a><span class="badge badge-primary badge-pill">'+c.count.toString()+'</span></div>\
 		<div class="list-group collapse" id="list-country-'+c.locID+'"></div>';
 		jQuery('#list-countrregionlist').append(html)
 		region.forEach(function(r){
