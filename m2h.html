@@ -40,30 +40,36 @@
 
 		<div class="sidebar-pane" id="profile">
 			<h1 class="sidebar-header">Region download<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-			<p>You can now see all your birded locations with the number of checklists (icon value).</p>
-			<p>From these locations, we listed below the different countries/regions you've been birding. The blue badges <span class="badge badge-primary badge-pill" style="float:inherit;">25</span> indicate the number of different locations for that particular region.</p>
-			<p>Click on the download icon <i class="fas fa-download" ></i> to download all eBird hotspots for that region. We recommend that you download regions rather than countries when possible.</p>
-			<p>Once you are done, click on the button "Find locations without hotspot" below the list.</p>
-			<div class="list-group list-group-root well" id="list-countrregionlist">
+			<h2><a data-toggle="collapse" href="#instruction1"  aria-expanded="true" aria-controls="instruction1" id="instructiona">Instruction</a></h2>
+			<div class="collapse show" id="instruction1">
+				<p>You can now see all your birded locations with the number of checklists (icon value).</p>
+				<p>From these locations, we listed below the different countries/regions you've been birding. The blue badges <span class="badge badge-primary badge-pill" style="float:inherit;">25</span> indicate the number of different locations for that particular region.</p>
+				<p>Click on the download icon <i class="fas fa-download" ></i> to download all eBird hotspots for that region. We recommend that you download regions rather than countries when possible.</p>
+				<p>Once you are done, click on the button "Find locations without hotspot" below the list.</p></div>
+				<div class="list-group list-group-root well" id="list-countrregionlist">
+				</div>
+				<button type="button" class="btn btn-primary buttoncenter" id="FindLocationHotspot" onclick="FindLocationHotspot()">Find Locations without hotspot</button>
 			</div>
-			<button type="button" class="btn btn-primary buttoncenter" id="FindLocationHotspot" onclick="FindLocationHotspot()">Find Locations without hotspot</button>
-		</div>
 
-		<div class="sidebar-pane" id="messages">
-			<h1 class="sidebar-header">Locations<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-			<p>Locations without hotspots are listed in the table below and sorted by distance to the nearest hotspot (right column). Click on each line to view these on the map.</p>
-			<p>If you would like to change the location, click on your marker on the map and a link to your checklist will be provided. There, simply click on "Edit location". If you wish to change several checklists from the same location, we suggest you use the "My location" page of eBird.</p>
-			<table class="table table-condensed table-hover">
-				<thead>
-					<tr>
-						<th>Place</th>
-						<th>Nearest Hotspot</th>
-					</tr>
-				</thead>
-				<tbody id="messages-table">
-				</tbody>
-			</table>
+			<div class="sidebar-pane" id="messages">
+				<h1 class="sidebar-header">Locations<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+				<h2><a data-toggle="collapse" href="#instruction2"  aria-expanded="true" aria-controls="instruction2" id="instructiona">Instruction</a></h2>
+				<div class="collapse show" id="instruction2">			
+					<p>Locations without hotspots are listed in the table below and sorted by distance to the nearest hotspot (right column). Click on each line to view these on the map.</p>
+					<p>If you would like to change the location, click on your marker on the map and a link to your checklist will be provided. There, simply click on "Edit location". If you wish to change several checklists from the same location, we suggest you use the "My location" page of eBird.</p>
+					<p>Last tip, you can display/hide the eBird hotspots by toggling the checkbox of the layer on the top-right corner of your screen. Sometimes your personal location marker is hidden behind a hotspot marker.</p>
+				</div>
+				<table class="table table-condensed table-hover">
+					<thead>
+						<tr>
+							<th>Place</th>
+							<th>Nearest Hotspot</th>
+						</tr>
+					</thead>
+					<tbody id="messages-table">
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
-</div>
-<div id="map1" class="sidebar-map"></div>
+	<div id="map1" class="sidebar-map"></div>

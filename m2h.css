@@ -27,7 +27,7 @@ html, body, #wrapper, #main, .fusion-row, #content, .page, .post-content, #yourF
 	height: 100%;
 }
 h2{
-	margin: 15px 0px 0px 0px;
+	margin: 15px 0px 0px 0px !important;
 }
 .rich-snippet-hidden{
 	display:none;
@@ -146,7 +146,7 @@ h2{
 }
 */
 .list-group.list-group-root > .list-group > .list-group-item {
-	padding-left: 45px;
+	padding-left: 37px;
 }
 .list-group-item {
 	padding: 6px 10px;
@@ -180,4 +180,20 @@ h2{
 }
 #list-countrregionlist{
 	margin: 0px -10px;
+}
+
+#instructiona{
+	text-decoration: none;
+}
+#instructiona:before {
+  content: "\f078"; /* fa-chevron-down */
+  font-family: 'FontAwesome';
+  padding-right: 5px;
+}
+#instructiona:hover:before {
+  color:#1a80b6;
+}
+
+#instructiona[aria-expanded="true"]:before {
+  content: "\f077"; /* fa-chevron-up */
 }
