@@ -1,38 +1,13 @@
 /*GENEAL STRUCTURE*/
-html{
-	margin-top:0!important;
-	overflow-y: hidden !important;
-}
-html.wait, html.wait * { cursor: wait !important; }
-body{
-	overflow: hidden;
-}
-body.body_blank.admin-bar{
-	top:0px!important;
-}
-img{
-	margin:auto;
-}
-#wpadminbar{
-	display:none;
-}
-
-#wrapper{
-	max-width:100%!important;
-}
-#main{
-	padding:0!important;
-}
-html, body, #wrapper, #main, .fusion-row, #content, .page, .post-content, #yourForm, .page-table, .page-row, .main, #map1{
+html, body, .initial-content, #map1{
 	height: 100%;
 }
 h2{
 	margin: 15px 0px 0px 0px !important;
 }
-.rich-snippet-hidden{
-	display:none;
+.leaflet-container{
+	font:inherit;
 }
-
 
 /* SideBAr*/
 @media (min-width: 1200px){
@@ -182,11 +157,11 @@ h2{
 	margin: 0px -10px;
 }
 
-#instructiona{
+/*#instructiona{
 	text-decoration: none;
 }
 #instructiona:before {
-  content: "\f078"; /* fa-chevron-down */
+  content: "\f078"; /* fa-chevron-down 
   font-family: 'FontAwesome';
   padding-right: 5px;
 }
@@ -195,5 +170,21 @@ h2{
 }
 
 #instructiona[aria-expanded="true"]:before {
-  content: "\f077"; /* fa-chevron-up */
+  content: "\f077"; /* fa-chevron-up 
+}*/
+#log-bird{
+	height: 16px;
 }
+.instruction-chevron{
+    padding-right: 20px;
+}
+.btn-primary{
+	background-color: #0074d9;
+}
+.btn-primary:hover{
+	background-color: #007bff;
+}
+.leaflet-control-layers-selector{
+	display:initial;
+}
+

@@ -3,9 +3,6 @@ cntrList = [["AC","Ashmore and Cartier Islands"],["AD","Andorra"],["AE","United 
 
 jQuery(document).ready(function() {
 
-	jQuery('#avada-stylesheet-inline-css').remove()
-	jQuery('#avada-stylesheet-css').remove()
-
 	//Create map   
 	map = new L.Map('map1');
 	//map.setView(L.latLng(46.57591, 7.84956), 8);
@@ -16,14 +13,14 @@ jQuery(document).ready(function() {
 	};
 	control = L.control.layers(baseLayers, null, { collapsed: false	}).addTo(map);
 	L.MakiMarkers.accessToken = token.mapbox;
-	sidebar = L.control.sidebar('sidebar').addTo(map);
+	sidebar = L.control.sidebar({container: 'sidebar'}).addTo(map);
 
 	makersHotspot = L.markerClusterGroup({	
 		showCoverageOnHover:1, 
 		maxClusterRadius:50,
 		iconCreateFunction: function(cluster) {
 			return L.icon({
-				iconUrl: "https://zoziologie.raphaelnussbaumer.com/wp-content/plugins/Merge2Hotspot/hotspot-icon-hotspot-plus_small.png",
+				iconUrl: "https://zoziologie.raphaelnussbaumer.com/assets/Merge2Hotspot/images/hotspot-icon-hotspot-plus_small.png",
 				iconAnchor: [12, 30],
 				popupAnchor: [0, -12],
 			})
@@ -50,6 +47,14 @@ jQuery(document).ready(function() {
 			}
 		})
 	}
+	
+	togglechevron = function(e) {
+		jQuery(e.target).prev().find('.fas').toggleClass('fa-chevron-down fa-chevron-up')
+	};
+	jQuery('#instruction1').on('hidden.bs.collapse',togglechevron);
+	jQuery('#instruction1').on('shown.bs.collapse',togglechevron);
+	jQuery('#instruction2').on('shown.bs.collapse',togglechevron);
+	jQuery('#instruction2').on('hidden.bs.collapse',togglechevron);
 })
 
 function FindLocationHotspot(){
@@ -75,7 +80,7 @@ function FindLocationHotspot(){
 				pop = pop + '<br><a href="https://ebird.org/MyEBird?cmd=manageLocations" target="_blank" title="Search the location name in the search box. You need to be login in eBird">Suggest as a hotspot</a>'
 				var m = L.marker([parseFloat(l.Latitude), parseFloat(l.Longitude)],{
 					icon:L.icon({
-						iconUrl: "https://zoziologie.raphaelnussbaumer.com/wp-content/plugins/Merge2Hotspot/hotspot-icon_perso_small.png",
+						iconUrl: "https://zoziologie.raphaelnussbaumer.com/assets/Merge2Hotspot/images/hotspot-icon_perso_small.png",
 						iconAnchor: [12, 30],
 						popupAnchor: [0, -12],
 					})
@@ -300,7 +305,7 @@ ListRegion = function(loc){
 							h=d;
 							var m = L.marker([parseFloat(d.lat), parseFloat(d.lng)],{
 								icon:L.icon({
-									iconUrl: "https://zoziologie.raphaelnussbaumer.com/wp-content/plugins/Merge2Hotspot/hotspot-icon-hotspot_small.png",
+									iconUrl: "https://zoziologie.raphaelnussbaumer.com/assets/Merge2Hotspot/images/hotspot-icon-hotspot_small.png",
 									iconAnchor: [12, 30],
 									popupAnchor: [0, -12],
 								})
