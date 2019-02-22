@@ -1,6 +1,6 @@
 # Merge2Hotspot
 
-Find an existing hotspot for your personal locations on eBird.
+Find existing hotspots for your personal locations on eBird.
 
 [DEMO](https://zoziologie.raphaelnussbaumer.com/merge2hotspot/)
 
