@@ -39,7 +39,7 @@ jQuery(document).ready(function() {
 	// Open my data if me in url
 	if ( window.location.search.substring(1).indexOf('me') !== -1 ){
 		map.spin(true);
-		console.log('loading personal file')
+		//console.log('loading personal file')
 		jQuery.get("https://zoziologie.raphaelnussbaumer.com/wp-content/plugins/SeeYourObservations/MyEBirdData.csv", function(data){
 			if (processed){
 				map.spin(false);
@@ -73,11 +73,12 @@ function FindLocationHotspot(){
 			var dist = hotspot.map(h => distance(parseFloat(l.Latitude), parseFloat(l.Longitude), h.lat, h.lng) )
 			var mm = dist.reduce( (acc,curV, curI) => acc[0] > curV ? [curV, curI] : acc  ,[100000,undefined] )
 			if (hotspot[mm[1]].locName == l.Location) {
-				console.log(hotspot[mm[1]])
+				//console.log(hotspot[mm[1]])
 			} else {
-				var pop = '<b>Name:</b> '+l.Location+'<br><b>Checklists: </b>'+ l.checklists.map( val => '<a href="https://ebird.org/view/checklist/'+val+'" target="_blank">'+val+'</a>' ).join(", ");
-				pop = l.checklists.length>2 ? pop+'<br><a href="https://ebird.org/MyEBird?cmd=manageLocations" target="_blank" title="Search the location name in the search box. You need to be login in eBird">Change for all checklists</a>' : pop;
-				pop = pop + '<br><a href="https://ebird.org/MyEBird?cmd=manageLocations" target="_blank" title="Search the location name in the search box. You need to be login in eBird">Suggest as a hotspot</a>'
+				var pop = '<p><b>Name:</b> '+l.Location+'<br><b>Checklists: </b>'+ l.checklists.map( val => '<a href="https://ebird.org/view/checklist/'+val+'" target="_blank">'+val+'</a>' ).join(", ");
+				//pop = l.checklists.length>2 ? pop+'<br><a href="https://ebird.org/MyEBird?cmd=manageLocations" target="_blank" title="Search the location name in the search box. You need to be login in eBird">Change for all checklists</a>' : pop;
+				//pop = pop + '<br><a href="https://ebird.org/MyEBird?cmd=manageLocations" target="_blank" title="Search the location name in the search box. You need to be login in eBird">Suggest as a hotspot</a>'
+				pop += '<button role="button" class="btn btn-secondary" onclick="OpenmanageLocations(\''+l.checklists[0]+'\')">Merge to/suggest as hotspot</button></p>'
 				var m = L.marker([parseFloat(l.Latitude), parseFloat(l.Longitude)],{
 					icon:L.icon({
 						iconUrl: "https://zoziologie.raphaelnussbaumer.com/assets/Merge2Hotspot/images/hotspot-icon_perso_small.png",
@@ -101,14 +102,18 @@ function FindLocationHotspot(){
 	map.fitBounds(makersLocNoHot.getBounds(), {paddingTopLeft: [500, 0]});
 	makersLoc.removeFrom(map)
 
-
-	var tableRef = document.getElementById('messages-table');
 	locNoHot = locNoHot.sort( (l1,l2) => l1.distance<l2.distance ? -1 : (l1.distance>l2.distance ? 1:0) )
 	locNoHot.forEach(function(l){
-		var newRow = tableRef.insertRow(tableRef.rows.length)
-		newRow.setAttribute('onclick', 'map.setView(new L.LatLng('+l.Latitude+', +'+l.Longitude+'),16)',0);
-		newRow.insertCell(0).appendChild(document.createTextNode(l.Location ));
-		newRow.insertCell(1).appendChild(document.createTextNode( l.nearbyHot.locName+' ('+Math.round(l.distance*1000).toString()+'m)'));
+		var td1 = l.Location+'<a href="#" onclick="OpenmanageLocations(\''+l.checklists[0]+'\')"><i class="fas fa-edit pad-r"></i></a>';
+		var dist = l.distance<1 ?  Math.round(Math.round(l.distance*1000).toString()).toString()+'m' : Math.round(Math.round(l.distance).toString()).toString()+'km';
+		var td2 =  l.nearbyHot.locName+' ('+ dist +')';
+		jQuery('#messages-table').append('<tr onclick="map.setView(new L.LatLng('+l.Latitude+', +'+l.Longitude+'),16)"><td>'+td1+'</td><td>'+td2+'</td></tr>');
+	})
+}
+
+function OpenmanageLocations(subId){
+	jQuery.getJSON('https://ebird.org/ws2.0/product/checklist/view/'+subId+"?key="+token.ebird,function(data){
+		window.open('https://ebird.org/MyEBird?cmd=EditLoc&locID='+data.locId,'_blank');
 	})
 }
 
@@ -186,7 +191,7 @@ function processFile( file, size ){
 				});
 
 				loc.forEach(function(l){
-					var pop = '<b>Name:</b> '+l.Location+' ('+l.region+')<br><b>Checklists: </b>'+ l.checklists.map( val => '<a href="https://ebird.org/view/checklist/'+val+'" target="_blank">'+val+'</a>' ).join(", ");
+					var pop = '<p><b>Name:</b> '+l.Location+' ('+l.region+')<br><b>Checklists: </b>'+ l.checklists.map( val => '<a href="https://ebird.org/view/checklist/'+val+'" target="_blank">'+val+'</a>' ).join(", ")+'</p>';
 					var m = L.marker([parseFloat(l.Latitude), parseFloat(l.Longitude)],{
 						icon:L.MakiMarkers.icon({
 							icon: l.checklists.length < 100  ? l.checklists.length : (l.checklists.length < 1000 ? 'c' : 'k' ),
@@ -242,7 +247,7 @@ ListRegion = function(loc){
 	}, [] )
 
 	country.forEach(function(c){
-		html = '<div class="list-group-item "><a href="#list-country-'+c.locID+'" class="list-crl-a" data-toggle="collapse"><i class="fas fa-chevron fa-chevron-right"></i>'+c.name+'</a><a href="#" class="rcl-download" id="rcl-download-'+c.locID+'"><i class="fas fa-download" ></i></a><span class="badge badge-primary badge-pill">'+c.count.toString()+'</span></div>\
+		html = '<div class="list-group-item "><a href="#list-country-'+c.locID+'" class="list-crl-a" data-toggle="collapse"><i class="fas fa-chevron fa-chevron-right"></i><span class="chevron-margin">'+c.name+'</span></a><a href="#" class="rcl-download" id="rcl-download-'+c.locID+'"><i class="fas fa-download" ></i></a><span class="badge badge-primary badge-pill">'+c.count.toString()+'</span></div>\
 		<div class="list-group collapse" id="list-country-'+c.locID+'"></div>';
 		jQuery('#list-countrregionlist').append(html)
 		region.forEach(function(r){
@@ -257,7 +262,7 @@ ListRegion = function(loc){
 	})
 
 	country.forEach(function(c){
-		jQuery.get("https://ebird.org/ws2.0/ref/region/list/subnational1/"+c.locID+"?fmt=json&key="+token.ebird,function(data){
+		jQuery.getJSON("https://ebird.org/ws2.0/ref/region/list/subnational1/"+c.locID+"?fmt=json&key="+token.ebird,function(data){
 			region.forEach(function(r){
 				if (r.locID.split('-')[0] == c.locID){
 					var d = data.find(d=> d.code ==r.locID)
@@ -287,18 +292,22 @@ ListRegion = function(loc){
 		});
 		jQuery('.rcl-download').on('click', function(e) {
 			e.preventDefault();
-			if (!jQuery(e.target).hasClass('fa-disabled')){
-				if (jQuery(e.target).hasClass('rcl-download')){
-					val = jQuery(e.target).attr('id').replace('rcl-download-','')
+			if (!jQuery(this).hasClass('fa-disabled')){
+				if (jQuery(this).hasClass('rcl-download')){
+					val = jQuery(this).attr('id').replace('rcl-download-','')
 				} else {
-					val = jQuery(e.target.parentElement).attr('id').replace('rcl-download-','')
+					val = jQuery(this.parentElement).attr('id').replace('rcl-download-','')
 				}
-				jQuery(e.target).removeClass('fa-download').addClass('fa-spinner fa-spin');
-				jQuery.get("https://ebird.org/ws2.0/ref/hotspot/"+val+"?fmt=json&key="+token.ebird,function(data){
+				this.innerHTML='<i class="fa fa-spinner fa-spin"></i>'; 
+				jQuery.getJSON("https://ebird.org/ws2.0/ref/hotspot/"+val+"?fmt=json&key="+token.ebird,function(data){
 					downloaded.push(val)
-					jQuery(e.target).removeClass('fa-spinner fa-spin').addClass('fa-download fa-disabled');
+					jQuery('#rcl-download-'+val)[0].innerHTML='<i class="fas fa-download"></i>'; 
+					jQuery('#rcl-download-'+val).addClass('fa-disabled');
 					//jQuery(jQuery("[id^=list-region-"+val+"]")[0]).find('i').addClass('fa-disabled');
-					jQuery(jQuery("[id^=list-country-"+val+"]")[0]).find('i').addClass('fa-disabled');
+					jQuery(jQuery(jQuery("[id^=list-country-"+val+"]")[0]).find('.rcl-download')).each( function(e){
+						e.innerHTML=='<i class="fas fa-download"></i>';
+					});
+					jQuery(jQuery(jQuery("[id^=list-country-"+val+"]")[0]).find('.rcl-download')).addClass('fa-disabled');
 					var hlocid = hotspot.map( h => h.locId);
 					data.forEach(function(d){
 						if (hlocid.indexOf(d.locId)<0){
