@@ -21,7 +21,7 @@ jQuery(document).ready(function() {
 		maxClusterRadius:50,
 		iconCreateFunction: function(cluster) {
 			return L.icon({
-				iconUrl: "https://zoziologie.raphaelnussbaumer.com/assets/Merge2Hotspot/images/hotspot-icon-hotspot-plus_small.png",
+				iconUrl: "./assets/hotspot-icon-hotspot-plus_small.png",
 				iconAnchor: [12, 30],
 				popupAnchor: [0, -12],
 			})
@@ -82,7 +82,7 @@ function FindLocationHotspot(){
 				pop += '<button role="button" class="btn btn-secondary" onclick="OpenmanageLocations(\''+l.checklists[0]+'\')">Merge to/suggest as hotspot</button></p>'
 				var m = L.marker([parseFloat(l.Latitude), parseFloat(l.Longitude)],{
 					icon:L.icon({
-						iconUrl: "https://zoziologie.raphaelnussbaumer.com/assets/Merge2Hotspot/images/hotspot-icon_perso_small.png",
+						iconUrl: "./assets/hotspot-icon_perso_small.png",
 						iconAnchor: [12, 30],
 						popupAnchor: [0, -12],
 					})
@@ -315,7 +315,7 @@ ListRegion = function(loc){
 							h=d;
 							var m = L.marker([parseFloat(d.lat), parseFloat(d.lng)],{
 								icon:L.icon({
-									iconUrl: "https://zoziologie.raphaelnussbaumer.com/assets/Merge2Hotspot/images/hotspot-icon-hotspot_small.png",
+									iconUrl: "./assets/hotspot-icon-hotspot_small.png",
 									iconAnchor: [12, 30],
 									popupAnchor: [0, -12],
 								})
