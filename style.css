@@ -198,3 +198,7 @@ font-size: initial;
 .pad-r{
 	padding-left:5px;
 }
+
+.leaflet-sidebar-tabs>li>a, .leaflet-sidebar-tabs>ul>li>a {
+    padding: 12px;
+}

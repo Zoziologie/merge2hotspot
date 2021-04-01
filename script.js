@@ -21,7 +21,7 @@ jQuery(document).ready(function() {
 		maxClusterRadius:50,
 		iconCreateFunction: function(cluster) {
 			return L.icon({
-				iconUrl: "./assets/hotspot-icon-hotspot-plus_small.png",
+				iconUrl: "/assets/hotspot-icon-hotspot-plus_small.png",
 				iconAnchor: [12, 30],
 				popupAnchor: [0, -12],
 			})
@@ -41,13 +41,12 @@ jQuery(document).ready(function() {
 	if ( window.location.search.substring(1).indexOf('me') !== -1 ){
 		map.spin(true);
 		//console.log('loading personal file')
-		jQuery.get("https://zoziologie.raphaelnussbaumer.com/wp-content/plugins/SeeYourObservations/MyEBirdData.csv", function(data){
-			if (processed){
-				map.spin(false);
-				processFile(data, data.length) 
-			}
+		jQuery.get("/assets/MyEBirdData.csv", function(data){
+			map.spin(false);
+			processFile(data, data.length) 
 		})
 	}
+
 	
 	togglechevron = function(e) {
 		jQuery(e.target).prev().find('.fas').toggleClass('fa-chevron-down fa-chevron-up')
@@ -79,10 +78,10 @@ function FindLocationHotspot(){
 				var pop = '<p><b>Name:</b> '+l.Location+'<br><b>Checklists: </b>'+ l.checklists.map( val => '<a href="https://ebird.org/view/checklist/'+val+'" target="_blank">'+val+'</a>' ).join(", ");
 				//pop = l.checklists.length>2 ? pop+'<br><a href="https://ebird.org/MyEBird?cmd=manageLocations" target="_blank" title="Search the location name in the search box. You need to be login in eBird">Change for all checklists</a>' : pop;
 				//pop = pop + '<br><a href="https://ebird.org/MyEBird?cmd=manageLocations" target="_blank" title="Search the location name in the search box. You need to be login in eBird">Suggest as a hotspot</a>'
-				pop += '<button role="button" class="btn btn-secondary" onclick="OpenmanageLocations(\''+l.checklists[0]+'\')">Merge to/suggest as hotspot</button></p>'
+				pop += '<button role="button" class="btn btn-secondary" onclick="OpenmanageLocations(\''+l.checklists[0]+'\')"><i class="fas fa-edit"></i> Merge to/suggest as hotspot</button></p>'
 				var m = L.marker([parseFloat(l.Latitude), parseFloat(l.Longitude)],{
 					icon:L.icon({
-						iconUrl: "./assets/hotspot-icon_perso_small.png",
+						iconUrl: "/assets/hotspot-icon_perso_small.png",
 						iconAnchor: [12, 30],
 						popupAnchor: [0, -12],
 					})
@@ -135,8 +134,8 @@ function processFile( file, size ){
 		header:true,
 		step: function(row,handler) {
 
-			data.push(row.data[0]);
-			progress = progress + Object.values(row.data[0]).join(',').length;
+			data.push(row.data);
+			/*progress = progress + Object.values(row.data[0]).join(',').length;
 
 			var newPercent = Math.round(progress / size * 100);
 			if (newPercent === percent) return;
@@ -145,7 +144,7 @@ function processFile( file, size ){
 			//pgbar.style.width = percent + '%'; 
 			//pgbar.innerHTML = percent * 1  + '%';
 			jQuery("#MyPgBar").css('width', percent+'%').attr('aria-valuenow', percent).html(percent * 1  + '%');
-			setTimeout(function(){handler.resume()},50)
+			setTimeout(function(){handler.resume()},50)*/
 		},
 		complete: function() {
 			//data = results.data;
@@ -248,7 +247,7 @@ ListRegion = function(loc){
 	}, [] )
 
 	country.forEach(function(c){
-		html = '<div class="list-group-item "><a href="#list-country-'+c.locID+'" class="list-crl-a" data-toggle="collapse"><i class="fas fa-chevron fa-chevron-right"></i><span class="chevron-margin">'+c.name+'</span></a><a href="#" class="rcl-download" id="rcl-download-'+c.locID+'"><i class="fas fa-download" ></i></a><span class="badge badge-primary badge-pill">'+c.count.toString()+'</span></div>\
+		html = '<div class="list-group-item "><a href="#list-country-'+c.locID+'" class="list-crl-a" data-toggle="collapse"><i class="fas fa-chevron fa-chevron-right"></i><span class="chevron-margin">'+c.name+'</span></a><a href="#" class="rcl-download" id="rcl-download-'+c.locID+'"><i class="fas fa-download" ></i></a><span class="badge bg-primary bg-pill">'+c.count.toString()+'</span></div>\
 		<div class="list-group collapse" id="list-country-'+c.locID+'"></div>';
 		jQuery('#list-countrregionlist').append(html)
 		region.forEach(function(r){
@@ -315,7 +314,7 @@ ListRegion = function(loc){
 							h=d;
 							var m = L.marker([parseFloat(d.lat), parseFloat(d.lng)],{
 								icon:L.icon({
-									iconUrl: "./assets/hotspot-icon-hotspot_small.png",
+									iconUrl: "/assets/hotspot-icon-hotspot_small.png",
 									iconAnchor: [12, 30],
 									popupAnchor: [0, -12],
 								})
