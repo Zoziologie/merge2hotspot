@@ -15,7 +15,7 @@ jobs:
 
       - name: Move public folder
         run: |
-          cp -R public/ buid/
+          cp -R public/ build/
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2
