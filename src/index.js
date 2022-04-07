@@ -1,4 +1,3 @@
-import '../../token.js'
 import $ from "jquery";
 import 'bootstrap';
 import L from 'leaflet';
