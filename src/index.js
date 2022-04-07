@@ -1,22 +1,41 @@
-var loc=[], hotspot=[], locNoHot=[], downloaded=[], processed=true, sidebar, makersLoc, makersLocNoHot, makersHotspot
-cntrList = [["AC","Ashmore and Cartier Islands"],["AD","Andorra"],["AE","United Arab Emirates"],["AF","Afghanistan"],["AG","Antigua and Barbuda"],["AI","Anguilla"],["AL","Albania"],["AM","Armenia"],["AO","Angola"],["AQ","Antarctica"],["AR","Argentina"],["AS","American Samoa"],["AT","Austria"],["AU","Australia"],["AW","Aruba"],["AZ","Azerbaijan"],["BA","Bosnia and Herzegovina"],["BB","Barbados"],["BD","Bangladesh"],["BE","Belgium"],["BF","Burkina Faso"],["BG","Bulgaria"],["BH","Bahrain"],["BI","Burundi"],["BJ","Benin"],["BL","Saint Barthélemy"],["BM","Bermuda"],["BN","Brunei"],["BO","Bolivia"],["BQ","Caribbean Netherlands"],["BR","Brazil"],["BS","Bahamas"],["BT","Bhutan"],["BV","Bouvet Island"],["BW","Botswana"],["BY","Belarus"],["BZ","Belize"],["CA","Canada"],["CC","Cocos (Keeling) Islands"],["CD","DR Congo"],["CF","Central African Republic"],["CG","Congo"],["CH","Switzerland"],["CI","Côte d'Ivoire"],["CK","Cook Islands"],["CL","Chile"],["CM","Cameroon"],["CN","China"],["CO","Colombia"],["CP","Clipperton Island"],["CR","Costa Rica"],["CS","Coral Sea Islands"],["CU","Cuba"],["CV","Cape Verde"],["CW","Curaçao"],["CX","Christmas Island"],["CY","Cyprus"],["CZ","Czech Republic"],["DE","Germany"],["DJ","Djibouti"],["DK","Denmark"],["DM","Dominica"],["DO","Dominican Republic"],["DZ","Algeria"],["EC","Ecuador"],["EE","Estonia"],["EG","Egypt"],["EH","Western Sahara"],["ER","Eritrea"],["ES","Spain"],["ET","Ethiopia"],["FI","Finland"],["FJ","Fiji"],["FK","Falkland Islands (Malvinas)"],["FM","Micronesia"],["FO","Faroe Islands"],["FR","France"],["GA","Gabon"],["GB","United Kingdom"],["GD","Grenada"],["GE","Georgia"],["GF","French Guiana"],["GG","Guernsey"],["GH","Ghana"],["GI","Gibraltar"],["GL","Greenland"],["GM","Gambia"],["GN","Guinea"],["GP","Guadeloupe"],["GQ","Equatorial Guinea"],["GR","Greece"],["GS","South Georgia and South Sandwich Islands"],["GT","Guatemala"],["GU","Guam"],["GW","Guinea-Bissau"],["GY","Guyana"],["HK","Hong Kong"],["HM","Heard Island and McDonald Islands"],["HN","Honduras"],["HR","Croatia"],["HT","Haiti"],["HU","Hungary"],["ID","Indonesia"],["IE","Ireland"],["IL","Israel"],["IM","Isle of Man"],["IN","India"],["IO","British Indian Ocean Territory"],["IQ","Iraq"],["IR","Iran"],["IS","Iceland"],["IT","Italy"],["JE","Jersey"],["JM","Jamaica"],["JO","Jordan"],["JP","Japan"],["KE","Kenya"],["KG","Kyrgyzstan"],["KH","Cambodia"],["KI","Kiribati"],["KM","Comoros"],["KN","Saint Kitts and Nevis"],["KP","North Korea"],["KR","South Korea"],["KW","Kuwait"],["KY","Cayman Islands"],["KZ","Kazakhstan"],["LA","Laos"],["LB","Lebanon"],["LC","Saint Lucia"],["LI","Liechtenstein"],["LK","Sri Lanka"],["LR","Liberia"],["LS","Lesotho"],["LT","Lithuania"],["LU","Luxembourg"],["LV","Latvia"],["LY","Libya"],["MA","Morocco"],["MC","Monaco"],["MD","Moldova"],["ME","Montenegro"],["MF","Saint Martin (French part)"],["MG","Madagascar"],["MH","Marshall Islands"],["MK","Macedonia"],["ML","Mali"],["MM","Myanmar"],["MN","Mongolia"],["MO","Macau"],["MP","Northern Mariana Islands"],["MQ","Martinique"],["MR","Mauritania"],["MS","Montserrat"],["MT","Malta"],["MU","Mauritius"],["MV","Maldives"],["MW","Malawi"],["MX","Mexico"],["MY","Malaysia"],["MZ","Mozambique"],["NA","Namibia"],["NC","New Caledonia"],["NE","Niger"],["NF","Norfolk Island"],["NG","Nigeria"],["NI","Nicaragua"],["NL","Netherlands"],["NO","Norway"],["NP","Nepal"],["NR","Nauru"],["NU","Niue"],["NZ","New Zealand"],["OM","Oman"],["PA","Panama"],["PE","Peru"],["PF","French Polynesia"],["PG","Papua New Guinea"],["PH","Philippines"],["PK","Pakistan"],["PL","Poland"],["PM","Saint Pierre and Miquelon"],["PN","Pitcairn Islands"],["PR","Puerto Rico"],["PS","Palestinian Territory"],["PT","Portugal"],["PW","Palau"],["PY","Paraguay"],["QA","Qatar"],["RE","Réunion"],["RO","Romania"],["RS","Serbia"],["RU","Russia"],["RW","Rwanda"],["SA","Saudi Arabia"],["SB","Solomon Islands"],["SC","Seychelles"],["SD","Sudan"],["SE","Sweden"],["SG","Singapore"],["SH","Saint Helena, Ascension, and Tristan da Cunha"],["SI","Slovenia"],["SJ","Svalbard"],["SK","Slovakia"],["SL","Sierra Leone"],["SM","San Marino"],["SN","Senegal"],["SO","Somalia"],["SR","Suriname"],["SS","South Sudan"],["ST","São Tomé and Príncipe"],["SV","El Salvador"],["SX","Sint Maarten"],["SY","Syria"],["SZ","Swaziland"],["TC","Turks and Caicos Islands"],["TD","Chad"],["TF","French Southern and Antarctic Lands"],["TG","Togo"],["TH","Thailand"],["TJ","Tajikistan"],["TK","Tokelau"],["TL","Timor-Leste"],["TM","Turkmenistan"],["TN","Tunisia"],["TO","Tonga"],["TR","Turkey"],["TT","Trinidad and Tobago"],["TV","Tuvalu"],["TW","Taiwan"],["TZ","Tanzania"],["UA","Ukraine"],["UG","Uganda"],["UM","United States Minor Outlying Islands"],["US","United States"],["UY","Uruguay"],["UZ","Uzbekistan"],["VA","Vatican City (Holy See)"],["VC","Saint Vincent and the Grenadines"],["VE","Venezuela"],["VG","Virgin Islands (British)"],["VI","Virgin Islands (U.S.)"],["VN","Vietnam"],["VU","Vanuatu"],["WF","Wallis and Futuna"],["WS","Samoa"],["XK","Kosovo"],["XX","High Seas"],["YE","Yemen"],["YT","Mayotte"],["ZA","South Africa"],["ZM","Zambia"],["ZW","Zimbabwe"]];
+import '../../token.js'
+import $ from "jquery";
+import 'bootstrap';
+import L from 'leaflet';
+import 'leaflet-sidebar-v2';
+import 'papaparse';
+import 'leaflet-makimarkers'
+import 'leaflet-providers'
+import 'leaflet-spin'
+import 'leaflet.markercluster'
 
-jQuery(document).ready(function() {
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet-sidebar-v2/css/leaflet-sidebar.min.css";
+import './style.css';
+//import 'leaflet-makimarkers/MarkerCluster.css;
+
+
+var loc=[], hotspot=[], locNoHot=[], downloaded=[], processed=true, sidebar, makersLoc, makersLocNoHot, makersHotspot
+var cntrList = [["AC","Ashmore and Cartier Islands"],["AD","Andorra"],["AE","United Arab Emirates"],["AF","Afghanistan"],["AG","Antigua and Barbuda"],["AI","Anguilla"],["AL","Albania"],["AM","Armenia"],["AO","Angola"],["AQ","Antarctica"],["AR","Argentina"],["AS","American Samoa"],["AT","Austria"],["AU","Australia"],["AW","Aruba"],["AZ","Azerbaijan"],["BA","Bosnia and Herzegovina"],["BB","Barbados"],["BD","Bangladesh"],["BE","Belgium"],["BF","Burkina Faso"],["BG","Bulgaria"],["BH","Bahrain"],["BI","Burundi"],["BJ","Benin"],["BL","Saint Barthélemy"],["BM","Bermuda"],["BN","Brunei"],["BO","Bolivia"],["BQ","Caribbean Netherlands"],["BR","Brazil"],["BS","Bahamas"],["BT","Bhutan"],["BV","Bouvet Island"],["BW","Botswana"],["BY","Belarus"],["BZ","Belize"],["CA","Canada"],["CC","Cocos (Keeling) Islands"],["CD","DR Congo"],["CF","Central African Republic"],["CG","Congo"],["CH","Switzerland"],["CI","Côte d'Ivoire"],["CK","Cook Islands"],["CL","Chile"],["CM","Cameroon"],["CN","China"],["CO","Colombia"],["CP","Clipperton Island"],["CR","Costa Rica"],["CS","Coral Sea Islands"],["CU","Cuba"],["CV","Cape Verde"],["CW","Curaçao"],["CX","Christmas Island"],["CY","Cyprus"],["CZ","Czech Republic"],["DE","Germany"],["DJ","Djibouti"],["DK","Denmark"],["DM","Dominica"],["DO","Dominican Republic"],["DZ","Algeria"],["EC","Ecuador"],["EE","Estonia"],["EG","Egypt"],["EH","Western Sahara"],["ER","Eritrea"],["ES","Spain"],["ET","Ethiopia"],["FI","Finland"],["FJ","Fiji"],["FK","Falkland Islands (Malvinas)"],["FM","Micronesia"],["FO","Faroe Islands"],["FR","France"],["GA","Gabon"],["GB","United Kingdom"],["GD","Grenada"],["GE","Georgia"],["GF","French Guiana"],["GG","Guernsey"],["GH","Ghana"],["GI","Gibraltar"],["GL","Greenland"],["GM","Gambia"],["GN","Guinea"],["GP","Guadeloupe"],["GQ","Equatorial Guinea"],["GR","Greece"],["GS","South Georgia and South Sandwich Islands"],["GT","Guatemala"],["GU","Guam"],["GW","Guinea-Bissau"],["GY","Guyana"],["HK","Hong Kong"],["HM","Heard Island and McDonald Islands"],["HN","Honduras"],["HR","Croatia"],["HT","Haiti"],["HU","Hungary"],["ID","Indonesia"],["IE","Ireland"],["IL","Israel"],["IM","Isle of Man"],["IN","India"],["IO","British Indian Ocean Territory"],["IQ","Iraq"],["IR","Iran"],["IS","Iceland"],["IT","Italy"],["JE","Jersey"],["JM","Jamaica"],["JO","Jordan"],["JP","Japan"],["KE","Kenya"],["KG","Kyrgyzstan"],["KH","Cambodia"],["KI","Kiribati"],["KM","Comoros"],["KN","Saint Kitts and Nevis"],["KP","North Korea"],["KR","South Korea"],["KW","Kuwait"],["KY","Cayman Islands"],["KZ","Kazakhstan"],["LA","Laos"],["LB","Lebanon"],["LC","Saint Lucia"],["LI","Liechtenstein"],["LK","Sri Lanka"],["LR","Liberia"],["LS","Lesotho"],["LT","Lithuania"],["LU","Luxembourg"],["LV","Latvia"],["LY","Libya"],["MA","Morocco"],["MC","Monaco"],["MD","Moldova"],["ME","Montenegro"],["MF","Saint Martin (French part)"],["MG","Madagascar"],["MH","Marshall Islands"],["MK","Macedonia"],["ML","Mali"],["MM","Myanmar"],["MN","Mongolia"],["MO","Macau"],["MP","Northern Mariana Islands"],["MQ","Martinique"],["MR","Mauritania"],["MS","Montserrat"],["MT","Malta"],["MU","Mauritius"],["MV","Maldives"],["MW","Malawi"],["MX","Mexico"],["MY","Malaysia"],["MZ","Mozambique"],["NA","Namibia"],["NC","New Caledonia"],["NE","Niger"],["NF","Norfolk Island"],["NG","Nigeria"],["NI","Nicaragua"],["NL","Netherlands"],["NO","Norway"],["NP","Nepal"],["NR","Nauru"],["NU","Niue"],["NZ","New Zealand"],["OM","Oman"],["PA","Panama"],["PE","Peru"],["PF","French Polynesia"],["PG","Papua New Guinea"],["PH","Philippines"],["PK","Pakistan"],["PL","Poland"],["PM","Saint Pierre and Miquelon"],["PN","Pitcairn Islands"],["PR","Puerto Rico"],["PS","Palestinian Territory"],["PT","Portugal"],["PW","Palau"],["PY","Paraguay"],["QA","Qatar"],["RE","Réunion"],["RO","Romania"],["RS","Serbia"],["RU","Russia"],["RW","Rwanda"],["SA","Saudi Arabia"],["SB","Solomon Islands"],["SC","Seychelles"],["SD","Sudan"],["SE","Sweden"],["SG","Singapore"],["SH","Saint Helena, Ascension, and Tristan da Cunha"],["SI","Slovenia"],["SJ","Svalbard"],["SK","Slovakia"],["SL","Sierra Leone"],["SM","San Marino"],["SN","Senegal"],["SO","Somalia"],["SR","Suriname"],["SS","South Sudan"],["ST","São Tomé and Príncipe"],["SV","El Salvador"],["SX","Sint Maarten"],["SY","Syria"],["SZ","Swaziland"],["TC","Turks and Caicos Islands"],["TD","Chad"],["TF","French Southern and Antarctic Lands"],["TG","Togo"],["TH","Thailand"],["TJ","Tajikistan"],["TK","Tokelau"],["TL","Timor-Leste"],["TM","Turkmenistan"],["TN","Tunisia"],["TO","Tonga"],["TR","Turkey"],["TT","Trinidad and Tobago"],["TV","Tuvalu"],["TW","Taiwan"],["TZ","Tanzania"],["UA","Ukraine"],["UG","Uganda"],["UM","United States Minor Outlying Islands"],["US","United States"],["UY","Uruguay"],["UZ","Uzbekistan"],["VA","Vatican City (Holy See)"],["VC","Saint Vincent and the Grenadines"],["VE","Venezuela"],["VG","Virgin Islands (British)"],["VI","Virgin Islands (U.S.)"],["VN","Vietnam"],["VU","Vanuatu"],["WF","Wallis and Futuna"],["WS","Samoa"],["XK","Kosovo"],["XX","High Seas"],["YE","Yemen"],["YT","Mayotte"],["ZA","South Africa"],["ZM","Zambia"],["ZW","Zimbabwe"]];
+
 
 	//Create map   
-	map = new L.Map('map1');
+	var map = new L.Map('map1');
 	//map.setView(L.latLng(46.57591, 7.84956), 8);
 	map.fitWorld().zoomIn();
-	baseLayers = {
+	var baseLayers = {
 		'MapBox': L.tileLayer.provider('MapBox', {id: 'mapbox/streets-v11', accessToken:token.mapbox}).addTo(map),
 		'OpenStreetMap': L.tileLayer.provider('OpenStreetMap.Mapnik'),
 		'Satellite': L.tileLayer.provider('Esri.WorldImagery')
 	};
-	control = L.control.layers(baseLayers, null, { collapsed: false	}).addTo(map);
+	var control = L.control.layers(baseLayers, null, { collapsed: false	}).addTo(map);
 	L.MakiMarkers.accessToken = token.mapbox;
-	sidebar = L.control.sidebar({container: 'sidebar'}).addTo(map);
+	var sidebar = L.control.sidebar({container: 'sidebar'}).addTo(map);
 
-	makersHotspot = L.markerClusterGroup({	
+	var makersHotspot = L.markerClusterGroup({	
 		showCoverageOnHover:1, 
 		maxClusterRadius:50,
 		iconCreateFunction: function(cluster) {
@@ -27,10 +46,10 @@ jQuery(document).ready(function() {
 			})
 		}
 	});
-	makersLocNoHot = L.featureGroup();
+	var makersLocNoHot = L.featureGroup();
 	control.addOverlay(makersHotspot.addTo(map),'eBird Hotspot')
 
-	jQuery("#uploadMyEBirdData").change(function(evt) {
+	$("#uploadMyEBirdData").change(function(evt) {
 		if (processed){
 			processFile( evt.target.files[0], evt.target.files[0].size )
 		}
@@ -41,21 +60,21 @@ jQuery(document).ready(function() {
 	if ( window.location.search.substring(1).indexOf('me') !== -1 ){
 		map.spin(true);
 		//console.log('loading personal file')
-		jQuery.get("/assets/MyEBirdData.csv", function(data){
+		$.get("/assets/MyEBirdData.csv", function(data){
 			map.spin(false);
 			processFile(data, data.length) 
 		})
 	}
 
 	
-	togglechevron = function(e) {
-		jQuery(e.target).prev().find('.fas').toggleClass('fa-chevron-down fa-chevron-up')
+	/*var togglechevron = function(e) {
+		$(e.target).prev().find('.fas').toggleClass('fa-chevron-down fa-chevron-up')
 	};
-	jQuery('#instruction1').on('hidden.bs.collapse',togglechevron);
-	jQuery('#instruction1').on('shown.bs.collapse',togglechevron);
-	jQuery('#instruction2').on('shown.bs.collapse',togglechevron);
-	jQuery('#instruction2').on('hidden.bs.collapse',togglechevron);
-})
+	$('#instruction1').on('hidden.bs.collapse',togglechevron);
+	$('#instruction1').on('shown.bs.collapse',togglechevron);
+	$('#instruction2').on('shown.bs.collapse',togglechevron);
+	$('#instruction2').on('hidden.bs.collapse',togglechevron);*/
+
 
 function FindLocationHotspot(){
 	if (downloaded.length==0){
@@ -107,12 +126,12 @@ function FindLocationHotspot(){
 		var td1 = l.Location+'<a href="#" onclick="OpenmanageLocations(\''+l.checklists[0]+'\')"><i class="fas fa-edit pad-r"></i></a>';
 		var dist = l.distance<1 ?  Math.round(Math.round(l.distance*1000).toString()).toString()+'m' : Math.round(Math.round(l.distance).toString()).toString()+'km';
 		var td2 =  l.nearbyHot.locName+' ('+ dist +')';
-		jQuery('#messages-table').append('<tr onclick="map.setView(new L.LatLng('+l.Latitude+', +'+l.Longitude+'),16)"><td>'+td1+'</td><td>'+td2+'</td></tr>');
+		$('#messages-table').append('<tr onclick="map.setView(new L.LatLng('+l.Latitude+', +'+l.Longitude+'),16)"><td>'+td1+'</td><td>'+td2+'</td></tr>');
 	})
 }
 
 function OpenmanageLocations(subId){
-	jQuery.getJSON('https://ebird.org/ws2.0/product/checklist/view/'+subId+"?key="+token.ebird,function(data){
+	$.getJSON('https://ebird.org/ws2.0/product/checklist/view/'+subId+"?key="+token.ebird,function(data){
 		window.open('https://ebird.org/MyEBird?cmd=EditLoc&locID='+data.locId,'_blank');
 	})
 }
@@ -128,7 +147,7 @@ function processFile( file, size ){
 	var percent = 0;
 	var progress = 0;
 	const data = [];
-	jQuery('#MyPg').show()
+	$('#MyPg').show()
 	var pgbar = document.getElementById("MyPgBar");
 	Papa.parse(file, {
 		header:true,
@@ -143,7 +162,7 @@ function processFile( file, size ){
 			percent = newPercent;
 			//pgbar.style.width = percent + '%'; 
 			//pgbar.innerHTML = percent * 1  + '%';
-			jQuery("#MyPgBar").css('width', percent+'%').attr('aria-valuenow', percent).html(percent * 1  + '%');
+			$("#MyPgBar").css('width', percent+'%').attr('aria-valuenow', percent).html(percent * 1  + '%');
 			setTimeout(function(){handler.resume()},50)*/
 		},
 		complete: function() {
@@ -210,14 +229,14 @@ function processFile( file, size ){
 				ListRegion(loc)
 
 				map.spin(false);
-				jQuery('#MyPg').hide()
+				$('#MyPg').hide()
 			},0)
 		},
 	});
 }
 
 
-ListRegion = function(loc){
+var ListRegion = function(loc){
 	sidebar.open('profile');
 	var region = loc.reduce( function(acc, cur){
 		var ind = acc.findIndex( x => x.locID == cur.region)
@@ -249,27 +268,27 @@ ListRegion = function(loc){
 	country.forEach(function(c){
 		html = '<div class="list-group-item "><a href="#list-country-'+c.locID+'" class="list-crl-a" data-toggle="collapse"><i class="fas fa-chevron fa-chevron-right"></i><span class="chevron-margin">'+c.name+'</span></a><a href="#" class="rcl-download" id="rcl-download-'+c.locID+'"><i class="fas fa-download" ></i></a><span class="badge bg-primary bg-pill">'+c.count.toString()+'</span></div>\
 		<div class="list-group collapse" id="list-country-'+c.locID+'"></div>';
-		jQuery('#list-countrregionlist').append(html)
+		$('#list-countrregionlist').append(html)
 		region.forEach(function(r){
 			if(r.locID.split('-')[0]==c.locID){
 				html = '<div class="list-group-item"><span id="locID-'+r.locID+'">'+r.locID+'</span></a>\
 				<a href="#" class="rcl-download" id="rcl-download-'+r.locID+'"><i class="fas fa-download"></i></a>\
 				<span class="badge badge-primary badge-pill">'+r.count.toString()+'</span></div>';
-				jQuery('#list-country-'+c.locID).append(html)
+				$('#list-country-'+c.locID).append(html)
 			}
 		})
 
 	})
 
 	country.forEach(function(c){
-		jQuery.getJSON("https://ebird.org/ws2.0/ref/region/list/subnational1/"+c.locID+"?fmt=json&key="+token.ebird,function(data){
+		$.getJSON("https://ebird.org/ws2.0/ref/region/list/subnational1/"+c.locID+"?fmt=json&key="+token.ebird,function(data){
 			region.forEach(function(r){
 				if (r.locID.split('-')[0] == c.locID){
 					var d = data.find(d=> d.code ==r.locID)
 					if (d ==undefined){
-						jQuery('#locID-'+r.locID).html(c.name);
+						$('#locID-'+r.locID).html(c.name);
 					}else{
-						jQuery('#locID-'+r.locID).html(d.name);
+						$('#locID-'+r.locID).html(d.name);
 					}
 				}
 			})
@@ -281,33 +300,33 @@ ListRegion = function(loc){
 
 	/*list.forEach(function(l,id){
 		html='<div class="list-group-item"><a href="#">'+l.Location+'</a><a href="#" class="rcl-download" id="rcl-download-'+id+'"><i class="fas fa-download" ></a></div>';
-		jQuery('#list-region-'+l.region).append(html)
+		$('#list-region-'+l.region).append(html)
 	})*/
 
 	setTimeout(function(){
-		jQuery('.list-crl-a').on('click', function() {
-			jQuery('.fa-chevron', this)
+		$('.list-crl-a').on('click', function() {
+			$('.fa-chevron', this)
 			.toggleClass('fa-chevron-right')
 			.toggleClass('fa-chevron-down');
 		});
-		jQuery('.rcl-download').on('click', function(e) {
+		$('.rcl-download').on('click', function(e) {
 			e.preventDefault();
-			if (!jQuery(this).hasClass('fa-disabled')){
-				if (jQuery(this).hasClass('rcl-download')){
-					val = jQuery(this).attr('id').replace('rcl-download-','')
+			if (!$(this).hasClass('fa-disabled')){
+				if ($(this).hasClass('rcl-download')){
+					val = $(this).attr('id').replace('rcl-download-','')
 				} else {
-					val = jQuery(this.parentElement).attr('id').replace('rcl-download-','')
+					val = $(this.parentElement).attr('id').replace('rcl-download-','')
 				}
 				this.innerHTML='<i class="fa fa-spinner fa-spin"></i>'; 
-				jQuery.getJSON("https://ebird.org/ws2.0/ref/hotspot/"+val+"?fmt=json&key="+token.ebird,function(data){
+				$.getJSON("https://ebird.org/ws2.0/ref/hotspot/"+val+"?fmt=json&key="+token.ebird,function(data){
 					downloaded.push(val)
-					jQuery('#rcl-download-'+val)[0].innerHTML='<i class="fas fa-download"></i>'; 
-					jQuery('#rcl-download-'+val).addClass('fa-disabled');
-					//jQuery(jQuery("[id^=list-region-"+val+"]")[0]).find('i').addClass('fa-disabled');
-					jQuery(jQuery(jQuery("[id^=list-country-"+val+"]")[0]).find('.rcl-download')).each( function(e){
+					$('#rcl-download-'+val)[0].innerHTML='<i class="fas fa-download"></i>'; 
+					$('#rcl-download-'+val).addClass('fa-disabled');
+					//$($("[id^=list-region-"+val+"]")[0]).find('i').addClass('fa-disabled');
+					$($($("[id^=list-country-"+val+"]")[0]).find('.rcl-download')).each( function(e){
 						e.innerHTML=='<i class="fas fa-download"></i>';
 					});
-					jQuery(jQuery(jQuery("[id^=list-country-"+val+"]")[0]).find('.rcl-download')).addClass('fa-disabled');
+					$($($("[id^=list-country-"+val+"]")[0]).find('.rcl-download')).addClass('fa-disabled');
 					var hlocid = hotspot.map( h => h.locId);
 					data.forEach(function(d){
 						if (hlocid.indexOf(d.locId)<0){

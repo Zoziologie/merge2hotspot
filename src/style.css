@@ -202,3 +202,8 @@ font-size: initial;
 .leaflet-sidebar-tabs>li>a, .leaflet-sidebar-tabs>ul>li>a {
     padding: 12px;
 }
+.leaflet-sidebar-close{
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}
