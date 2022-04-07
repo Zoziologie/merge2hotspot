@@ -13,6 +13,10 @@ jobs:
           npm ci
           npm run build
 
+      - name: Move public folder
+        run: |
+          cp -R public/ buid/
+
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
