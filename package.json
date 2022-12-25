@@ -13,11 +13,12 @@
     "devDependencies": {
         "@babel/core": "^7.16.0",
         "@babel/preset-env": "^7.16.4",
-        "babel-loader": "^8.2.3",
+        "babel-loader": "^9.1.0",
+        "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.5.1",
         "html-webpack-plugin": "^5.5.0",
         "style-loader": "^3.3.1",
-        "webpack-cli": "^4.9.1",
+        "webpack-cli": "^5.0.1",
         "webpack-dev-server": "^4.6.0"
     },
     "dependencies": {

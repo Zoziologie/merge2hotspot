@@ -1,8 +1,8 @@
 const path = require('path');
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-//const CopyWebpackPlugin = require('copy-webpack-plugin');
- 
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 module.exports = {
   mode: 'production',
   entry: './src/index.js',
@@ -30,14 +30,14 @@ module.exports = {
     ],
   },
   plugins: [
-        new HtmlWebpackPlugin({
-          template: 'src/index.html',
-          inject: false,
-        }),
-        /*new CopyWebpackPlugin({
-            patterns: [
-                { from: 'public' }
-            ]
-        })*/
-    ]
+    new HtmlWebpackPlugin({
+      template: 'src/index.html',
+      inject: false,
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public' }
+      ]
+    })
+  ]
 };
