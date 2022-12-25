@@ -3,18 +3,18 @@
 <head>
 	<meta charset="utf-8">
 	<title>Merge2Hotspot | Zoziologie</title>
-	<meta name="description" content="My personal website for bird related stuff."ß>
+	<meta name="description" content="My personal website for bird related stuff." ß>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" type="image/x-icon" href="favicon.ico" />
 
 	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-1YGJHDR2PZ"></script>
 	<script>
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
 
-	  gtag('config', 'G-1YGJHDR2PZ');
+		gtag('config', 'G-1YGJHDR2PZ');
 	</script>
 </head>
 
@@ -33,8 +33,7 @@
 					<li><a href="https://github.com/Zoziologie/ChecklistLoctionToMerge" role="tab" target="_blank"><i
 								class="fab fa-github"></i></a></li>
 					<li><a href="https://zoziologie.raphaelnussbaumer.com" target="_blank" role="tab"><img
-								src="favicon.ico"
-								id="log-bird"></a></li>
+								src="favicon.ico" id="log-bird"></a></li>
 				</ul>
 			</div>
 
@@ -77,22 +76,23 @@
 								class="fa fa-caret-left"></i></span></h1>
 					<h2>3. Get eBird hotspots</h2>
 
-					<a data-bs-toggle="collapse" type="button" data-bs-target="#instruction1" aria-expanded="true" aria-expanded="false" aria-controls="instruction1" class="instructiona">
+					<a data-bs-toggle="collapse" type="button" data-bs-target="#instruction1" aria-expanded="true"
+						aria-expanded="false" aria-controls="instruction1" class="instructiona">
 						Instruction<i class="fas align-right fa-chevron-up instruction-chevron"></i>
 					</a>
 					<div class="collapse show" id="instruction1">
 						<p>You can now see all your birded locations with the number of checklists (icon value).</p>
 						<p>From these locations, we listed below the different countries/regions you've been birding.
-							The blue badges <span class="badge bg-primary bg-pill"
-								style="float:inherit;">25</span> indicate the number of locations birded in that
+							The blue badges <span class="badge bg-primary bg-pill" style="float:inherit;">25</span>
+							indicate the number of locations birded in that
 							particular region.</p>
 						<p>Click on the download icon <i class="fas fa-download"></i> to download all eBird hotspots for
 							that region. We recommend that you download regions rather than countries when possible.</p>
 						<p>Once you are done, click on the button "Find locations without hotspot" below the list.</p>
 					</div>
 					<div class="list-group list-group-root well" id="list-countrregionlist"></div>
-					<button type="button" class="btn btn-primary align-center" id="FindLocationHotspot"
-						onclick="FindLocationHotspot()">Find locations without hotspot</button>
+					<button type="button" class="btn btn-primary align-center" id="FindLocationHotspot">Find locations
+						without hotspot</button>
 				</div>
 
 				<div class="leaflet-sidebar-pane" id="messages">
@@ -104,8 +104,10 @@
 							class="fas fa-chevron-up align-right instruction-chevron"></i></a>
 					<div class="collapse show" id="instruction2">
 						<p>Locations without hotspots are listed in the table below and sorted by distance to the
-							nearest hotspot (right column). Click on each table row to view this location on the map.</p>
-						<p>If you would like to merge the location with an hotspot or suggest the location as a hotpost, click on <i class="fas fa-edit"></i>.</p>
+							nearest hotspot (right column). Click on each table row to view this location on the map.
+						</p>
+						<p>If you would like to merge the location with an hotspot or suggest the location as a hotpost,
+							click on <i class="fas fa-edit"></i>.</p>
 						<p>Last tip, you can display/hide the eBird hotspots by toggling the checkbox of the layer on
 							the top-right corner of your screen. Sometimes your personal location marker is hidden
 							behind a hotspot marker.</p>
@@ -129,4 +131,5 @@
 </body>
 <script src="https://kit.fontawesome.com/f15ed359e8.js" crossorigin="anonymous"></script>
 <script src="bundle.js"></script>
+
 </html>
