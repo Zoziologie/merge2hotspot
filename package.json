@@ -1,36 +1,37 @@
 {
-    "name": "merge2hotspot",
-    "homepage": "http://zoziologie.raphaelnussbaumer.com/merge2hotspot/",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "build": "webpack --mode=production",
-        "dev": "webpack serve --mode=development"
-    },
-    "author": "Raphaël Nussbaumer",
-    "license": "ISC",
-    "devDependencies": {
-        "@babel/core": "^7.16.0",
-        "@babel/preset-env": "^7.16.4",
-        "babel-loader": "^9.1.0",
-        "copy-webpack-plugin": "^11.0.0",
-        "css-loader": "^6.5.1",
-        "html-webpack-plugin": "^5.5.0",
-        "style-loader": "^3.3.1",
-        "webpack-cli": "^5.0.1",
-        "webpack-dev-server": "^4.6.0"
-    },
-    "dependencies": {
-        "bootstrap": "^5.1.3",
-        "jquery": "^3.6.0",
-        "leaflet": "^1.7.1",
-        "leaflet-makimarkers": "^3.1.0",
-        "leaflet-providers": "^1.13.0",
-        "leaflet-sidebar-v2": "^3.2.3",
-        "leaflet-spin": "^1.1.2",
-        "leaflet.markercluster": "^1.5.3",
-        "papaparse": "^5.3.2",
-        "spin": "^0.0.1"
-    }
+  "name": "merge2hotspot",
+  "homepage": "http://zoziologie.raphaelnussbaumer.com/merge2hotspot/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoziologie/merge2hotspot.git"
+  },
+  "title": "Merge To Hotspot",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.6",
+    "@studiometa/vue-mapbox-gl": "^2.0.2",
+    "axios": "^1.2.1",
+    "bootstrap": "^5.2.3",
+    "bootstrap-icons": "^1.10.2",
+    "mapbox-gl": "^2.11.1",
+    "vue": "^3.2.45"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "@vue/eslint-config-prettier": "^7.0.0",
+    "eslint": "^8.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-vue": "^9.4.0",
+    "prettier": "^2.2.1",
+    "sass": "^1.26.5",
+    "vite": "^4.0.0"
+  }
 }
