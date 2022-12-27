@@ -15,27 +15,26 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 <template>
   <div class="container-fluid h-100 d-flex flex-column p-0">
     <div class="row flex-grow-1 gx-0">
-      <div class="col-md-4 vh-100 d-flex flex-column" v-if="showSidebar">
-        <h3 class="mx-auto">Merge2Hotspot</h3>
+      <div class="col-md-4 vh-100 d-flex flex-column">
+        <div class="row mx-2 my-1">
+          <div class="col"><h3>Merge2Hotspot</h3></div>
+          <div class="col text-end align-middle">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm align-middle"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+            >
+              <i class="bi bi-info-circle"></i>
+            </button>
+          </div>
+        </div>
+
         <!-- Nav tabs -->
         <ul class="nav nav-tabs nav-fill" id="mainTab" role="tablist">
           <li class="nav-item" role="presentation">
             <button
               class="nav-link active"
-              id="introduction-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#introduction"
-              type="button"
-              role="tab"
-              aria-controls="introduction"
-              aria-selected="true"
-            >
-              1. Introduction
-            </button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button
-              class="nav-link"
               id="import-tab"
               data-bs-toggle="tab"
               data-bs-target="#import"
@@ -44,14 +43,14 @@ import "bootstrap-icons/font/bootstrap-icons.css";
               aria-controls="import"
               aria-selected="false"
             >
-              2. Import
+              1. Import
             </button>
           </li>
           <li class="nav-item" role="presentation">
             <button
               class="nav-link"
-              :class="{ disabled: myEBirdData.length == 0 }"
-              :aria-disabled="myEBirdData.length > 0"
+              :class="{ disabled: step < 2 }"
+              :aria-disabled="step < 2"
               id="hotspot-tab"
               data-bs-toggle="tab"
               data-bs-target="#hotspot"
@@ -60,16 +59,16 @@ import "bootstrap-icons/font/bootstrap-icons.css";
               aria-controls="hotspot"
               aria-selected="false"
             >
-              3. Hotspot
+              2. Hotspot
             </button>
           </li>
           <li class="nav-item" role="presentation">
             <button
               class="nav-link"
               :class="{
-                disabled: (myEBirdData.length == 0) | (hotspot.length == 0),
+                disabled: step < 3,
               }"
-              :aria-disabled="myEBirdData.length > 0"
+              :aria-disabled="step < 3"
               id="merge-tab"
               data-bs-toggle="tab"
               data-bs-target="#merge"
@@ -78,70 +77,25 @@ import "bootstrap-icons/font/bootstrap-icons.css";
               aria-controls="merge"
               aria-selected="false"
             >
-              4. Merge
+              3. Merge
             </button>
           </li>
         </ul>
 
         <!-- Tab panes -->
-        <div class="tab-content overflow-auto">
+        <div class="tab-content flex-grow-1 overflow-auto">
           <div
-            class="tab-pane active px-3 py-3"
-            id="introduction"
-            role="tabpanel"
-            aria-labelledby="introduction-tab"
-          >
-            <h4>How does it work?</h4>
-            <p>
-              This app helps you find your checklists for which the associated
-              location is not an eBird hotspot (i.e. personal location) and
-              suggests nearby hotspots. A link to to merge your personal
-              location to the hotspot will be provided.
-            </p>
-            <p>
-              Assigning a hotspot to your data is essential for data analysis.
-              For instance, you can then compute the probability of observation
-              of each specie for a given hotspot and
-              <a
-                href="https://zoziologie.raphaelnussbaumer.com/ebird2latex/"
-                traget="_blank"
-                >generate a checklist</a
-              >. Step by step instructions are given below.
-            </p>
-            <div class="d-grid gap-2 col-6 mx-auto">
-              <button
-                type="button"
-                class="btn btn-primary"
-                @click="navTabActivate('import')"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-          <div
-            class="tab-pane px-3 py-3"
+            class="tab-pane px-3 py-3 active"
             id="import"
             role="tabpanel"
             aria-labelledby="import-tab"
           >
-            <h4>Generate your eBird File</h4>
             <p>
-              The first step is to download all your eBird data on your
-              computer.
-            </p>
-            <a
-              role="button"
-              class="btn btn-primary mb-3 w-100"
-              href="https://ebird.org/downloadMyData"
-              target="_blank"
-            >
-              Download your eBird file
-            </a>
-            <h4>Import your eBird File</h4>
-            <p>
-              Import your <code>MyEBirdData.csv</code> using the upload file
-              below. Note this the file is never sent to our server, only used
-              in your browser.
+              Import your my eBird data (<code>MyEBirdData.csv</code>) which you
+              can
+              <a href="https://ebird.org/downloadMyData" target="_blank">
+                request from the ebird website </a
+              >:
             </p>
             <label class="w-100 mb-3">
               <!--class="custom-file"<input type="file" id="uploadMyEBirdData" class="custom-file-input" accept=".csv">-->
@@ -150,11 +104,11 @@ import "bootstrap-icons/font/bootstrap-icons.css";
                 id="uploadMyEBirdData"
                 class="form-control"
                 accept=".csv"
-                @change="processFile"
+                @change="processMyeBirdDataFile"
               />
               <span class="custom-file-control"></span>
             </label>
-            <div v-if="loadingData">
+            <div v-if="loadingMyeBirdData">
               <div
                 class="alert alert-warning d-flex align-items-center"
                 role="alert"
@@ -168,22 +122,15 @@ import "bootstrap-icons/font/bootstrap-icons.css";
                 to a minute...
               </div>
             </div>
-            <div v-else-if="(myEBirdData.length > 0) & (myLocation.length > 0)">
+            <div v-else-if="step > 1">
               <div class="alert alert-success" role="alert">
                 <i class="bi bi-check-circle-fill me-2"></i>
                 <strong>Data loaded successfuly! </strong>
-                {{ formatNb(myEBirdData.length) }} checklists over
-                {{ formatNb(myLocation.length) }} locations.
+                {{
+                  formatNb(myLocation.reduce((b, e) => b + e.subid.length, 0))
+                }}
+                checklists over {{ formatNb(myLocation.length) }} locations.
                 <br />
-              </div>
-              <div class="d-grid gap-2 col-6 mx-auto">
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  @click="navTabActivate('hotspot')"
-                >
-                  Next
-                </button>
               </div>
             </div>
           </div>
@@ -193,57 +140,9 @@ import "bootstrap-icons/font/bootstrap-icons.css";
             role="tabpanel"
             aria-labelledby="hotspot-tab"
           >
-            <h4>Download eBird hotspots</h4>
-            <div class="card mb-2">
-              <h6 class="card-header">
-                <a
-                  data-bs-toggle="collapse"
-                  href="#instruction1"
-                  aria-expanded="true"
-                  aria-controls="instruction1"
-                  class="d-block text-decoration-none"
-                  id="instruction1-heading"
-                >
-                  <i class="bi bi-info-circle-fill"></i> Instruction
-                </a>
-              </h6>
-              <div
-                id="instruction1"
-                class="collapse"
-                aria-labelledby="instruction1-heading"
-              >
-                <div class="card-body">
-                  <p>
-                    You can now see all your birded locations with the number of
-                    checklists (icon value).
-                  </p>
-                  <p>
-                    From these locations, we listed below the different
-                    countries/regions you've been birding. The blue badges
-                    <span
-                      class="badge bg-primary rounded-pill"
-                      style="float: inherit"
-                      >25</span
-                    >
-                    indicate the number of locations birded in this particular
-                    region.
-                  </p>
-                  <p>
-                    Click on the download icon
-                    <button class="btn btn-outline-primary btn-sm">
-                      <i class="bi bi-download"></i>
-                    </button>
-                    to download all eBird hotspots for this region. We recommend
-                    this you download regions rather than countries when
-                    possible.
-                  </p>
-                  <p>
-                    Once you are done, click on the button "Find locations
-                    without hotspot" below the list.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <p>
+              Download the eBird hotspots for the region(s) you want to check.
+            </p>
             <ul class="list-group">
               <li
                 v-for="r in region.filter((e) => e.subidnb > 0)"
@@ -251,93 +150,70 @@ import "bootstrap-icons/font/bootstrap-icons.css";
                 class="list-group-item d-flex justify-content-between align-items-start px-1 py-1"
               >
                 <div class="ms-2 me-auto">
-                  <span class="fw-bold me-2">
+                  <span class="fw-bold">
                     {{ r.name }}
                   </span>
-                  <span class="badge bg-primary rounded-pill">{{
-                    formatNb(r.subidnb)
-                  }}</span>
+                  <span class="badge bg-secondary pill ms-2"
+                    >{{ formatNb(r.locidnb) }}
+                    <i class="bi bi-pin"></i>
+                  </span>
+                  <span class="badge bg-secondary pill ms-2"
+                    >{{ formatNb(r.subidnb) }}
+                    <i class="bi bi-card-checklist"></i>
+                  </span>
                 </div>
                 <button
                   class="btn btn-outline-primary btn-sm"
-                  :class="{ disabled: r.status != null }"
+                  v-if="r.status == null"
                   @click="downloadRegion(r)"
                 >
-                  <i v-if="r.status == null" class="bi bi-download"></i>
-                  <div
-                    v-else-if="r.status == 'loading'"
-                    class="spinner-border spinner-border-sm"
-                    role="status"
-                  >
+                  <i class="bi bi-download"></i>
+                </button>
+                <button
+                  v-else-if="r.status == 'loading'"
+                  class="btn btn-warning btn-sm"
+                >
+                  <div class="spinner-border spinner-border-sm" role="status">
                     <span class="visually-hidden">Loading...</span>
                   </div>
-                  <i
-                    v-else-if="r.status == 'downloaded'"
-                    class="bi bi-check-circle"
-                  ></i>
+                </button>
+                <button
+                  v-else-if="r.status == 'downloaded'"
+                  class="btn btn-success btn-sm"
+                >
+                  <i class="bi bi-check-circle"></i>
                 </button>
               </li>
             </ul>
-            <div class="d-grid gap-2 col-6 mx-auto">
-              <button
-                type="button"
-                class="btn btn-primary"
-                @click="navTabActivate('merge')"
-              >
-                Next
-              </button>
-            </div>
           </div>
           <div
             class="tab-pane px-3 py-3"
             id="merge"
             role="tabpanel"
             aria-labelledby="merge-tab"
-          >
-            <h4>Merge personal locations</h4>
-            <div class="card mb-2">
-              <h6 class="card-header">
-                <a
-                  data-bs-toggle="collapse"
-                  href="#instruction2"
-                  aria-expanded="true"
-                  aria-controls="instruction2"
-                  class="d-block text-decoration-none"
-                  id="instruction2-heading"
-                >
-                  <i class="bi bi-info-circle-fill"></i> Instruction
-                </a>
-              </h6>
-              <div
-                id="instruction2"
-                class="collapse"
-                aria-labelledby="instruction2-heading"
-              >
-                <div class="card-body">
-                  <p>
-                    Locations without hotspots are listed in the table below and
-                    sorted by distance to the nearest hotspot (right column).
-                    Click on each table row to view this location on the map.
-                  </p>
-                  <p>
-                    If you would like to merge the location with an hotspot or
-                    suggest the location as a hotpost, click on
-                    <i class="fas fa-edit"></i>.
-                  </p>
-                  <p>
-                    Last tip, you can display/hide the eBird hotspots by
-                    toggling the checkbox of the layer on the top-right corner
-                    of your screen. Sometimes your personal location marker is
-                    hidden behind a hotspot marker.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="d-grid gap-2 col-6 mx-auto">
-              <button type="button" class="btn btn-primary" @click="runMerge()">
-                Find location to merge
-              </button>
-            </div>
+          ></div>
+        </div>
+        <div class="row">
+          <div class="d-grid gap-2 col-6 mx-auto">
+            <button
+              v-if="step == 2"
+              type="button"
+              class="btn btn-primary my-1"
+              @click="navTabActivate('hotspot')"
+            >
+              Next: <small>hotspot</small>
+            </button>
+            <button
+              v-else-if="step == 3"
+              type="button"
+              class="btn btn-primary my-1"
+              @click="
+                runMerge();
+                navTabActivate('merge');
+              "
+            >
+              Next: <small>merge</small>
+            </button>
           </div>
         </div>
       </div>
@@ -368,6 +244,105 @@ import "bootstrap-icons/font/bootstrap-icons.css";
       </div>
     </div>
   </div>
+  <div
+    class="modal fade"
+    id="exampleModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Information</h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <h5>Introduction</h5>
+          <p>
+            This app helps you find your checklists for which the associated
+            location is not an eBird hotspot (i.e. personal location) and
+            suggests nearby hotspots. A link to to merge your personal location
+            to the hotspot will be provided.
+          </p>
+          <p>
+            Assigning a hotspot to your data is essential for data analysis. For
+            instance, you can then compute the probability of observation of
+            each specie for a given hotspot and
+            <a
+              href="https://zoziologie.raphaelnussbaumer.com/ebird2latex/"
+              traget="_blank"
+              >generate a checklist</a
+            >. Step by step instructions are given below.
+          </p>
+          <h5>Step 1: Import</h5>
+          <p>
+            The first step is to download all your eBird data on your computer.
+          </p>
+          <a
+            role="button"
+            class="btn btn-primary mb-3 w-100"
+            href="https://ebird.org/downloadMyData"
+            target="_blank"
+          >
+            Download your eBird file
+          </a>
+          <p>
+            Import your <code>MyEBirdData.csv</code> using the upload file
+            below. Note this the file is never sent to our server, only used in
+            your browser.
+          </p>
+          <h5>Step 2: Hotspot</h5>
+          <p>
+            You can now see all your birded locations with the number of
+            checklists (icon value).
+          </p>
+          <p>
+            From these locations, we listed below the different
+            countries/regions you've been birding. The blue badges
+            <span class="badge bg-primary rounded-pill" style="float: inherit"
+              >25</span
+            >
+            indicate the number of locations birded in this particular region.
+          </p>
+          <p>
+            Click on the download icon
+            <button class="btn btn-outline-primary btn-sm">
+              <i class="bi bi-download"></i>
+            </button>
+            to download all eBird hotspots for this region. We recommend this
+            you download regions rather than countries when possible.
+          </p>
+          <p>
+            Once you are done, click on the button "Find locations without
+            hotspot" below the list.
+          </p>
+          <h5>Step 3: Merge</h5>
+          <p>
+            Locations without hotspots are listed in the table below and sorted
+            by distance to the nearest hotspot (right column). Click on each
+            table row to view this location on the map.
+          </p>
+          <p>
+            If you would like to merge the location with an hotspot or suggest
+            the location as a hotpost, click on
+            <i class="fas fa-edit"></i>.
+          </p>
+          <p>
+            Last tip, you can display/hide the eBird hotspots by toggling the
+            checkbox of the layer on the top-right corner of your screen.
+            Sometimes your personal location marker is hidden behind a hotspot
+            marker.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -376,30 +351,9 @@ export default {
   data() {
     return {
       map: null,
-      showSidebar: true,
-      myEBirdData: [],
-      loadingData: false,
+      myLocation: [],
+      loadingMyeBirdData: false,
       hotspot: [],
-      tileProviders: [
-        {
-          name: "Mapbox.Streets",
-          visible: true,
-          url: "https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicmFmbnVzcyIsImEiOiIzMVE1dnc0In0.3FNMKIlQ_afYktqki-6m0g",
-          attribution: "",
-        },
-        {
-          name: "Mapbox.Dark",
-          visible: false,
-          url: "https://api.mapbox.com/styles/v1/mapbox/dark-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicmFmbnVzcyIsImEiOiIzMVE1dnc0In0.3FNMKIlQ_afYktqki-6m0g",
-          attribution: "",
-        },
-        {
-          name: "Mapbox.Satellite",
-          visible: false,
-          url: "https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicmFmbnVzcyIsImEiOiIzMVE1dnc0In0.3FNMKIlQ_afYktqki-6m0g",
-          attribution: "",
-        },
-      ],
       region: [],
     };
   },
@@ -407,8 +361,8 @@ export default {
     formatNb(x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
-    processFile(event) {
-      this.loadingData = true;
+    processMyeBirdDataFile(event) {
+      this.loadingMyeBirdData = true;
       const reader = new FileReader();
       reader.onload = (e) => {
         const str = e.target.result;
@@ -419,7 +373,7 @@ export default {
           .slice(0, str.indexOf("\n"))
           .split(delimiter);
 
-        // Define list of header use
+        // Define list of header to be used
         const headers = [
           "Submission ID",
           "Location ID",
@@ -437,7 +391,7 @@ export default {
           "region",
         ];
 
-        // Find the index of the header
+        // Find the index of the header and check that the csv is valid
         const headersIndex = headers.map((e) => {
           const ind = headersExisting.indexOf(e);
           if (ind === -1) {
@@ -451,8 +405,8 @@ export default {
         // slice from \n index + 1 to the end of the text use split to create an array of each csv value row
         const rows = str.slice(str.indexOf("\n") + 1).split("\n");
 
-        // Map the rows. split values from each row into an array use headers.reduce to create an object object properties derived from headers:values the object passed as an element of the array
-        const arr = rows.map(function (row) {
+        //
+        const myEBirdData = rows.map(function (row) {
           const values = row.split(delimiter);
           const el = headers.reduce(function (object, header, index) {
             object[headersName[index]] = values[headersIndex[index]];
@@ -461,22 +415,38 @@ export default {
           return el;
         });
 
-        this.myEBirdData = [
-          ...new Map(arr.map((item) => [item.subid, item])).values(),
+        // Get unique checklist level data
+        const myChecklist = [
+          ...new Map(myEBirdData.map((item) => [item.subid, item])).values(),
         ].filter((e) => !isNaN(e.lat) & !isNaN(e.lng));
 
-        this.loadingData = false;
+        this.myLocation = Array.from(
+          new Set(myChecklist.map((s) => s.locid))
+        ).map((locId) => {
+          let dataLocId = myChecklist.filter((s) => s.locid === locId);
+          return {
+            locid: locId,
+            locname: dataLocId[0].locname,
+            lng: parseFloat(dataLocId[0].lng),
+            lat: parseFloat(dataLocId[0].lat),
+            subid: dataLocId.map((e) => e.subid),
+            region: dataLocId[0].region,
+          };
+        });
 
+        this.loadingMyeBirdData = false;
+
+        // Add number of location and checklist in region
         this.region.forEach((r) => {
-          r.subidnb = this.myEBirdData
-            .filter(
-              (s) => (s.region.split("-")[0] === r.code) | (s.region === r.code)
-            )
-            .reduce((b, e) => b + e.subid.length, 0);
+          const l = this.myLocation.filter(
+            (s) => (s.region.split("-")[0] === r.code) | (s.region === r.code)
+          );
+          r.subidnb = l.reduce((b, e) => b + e.subid.length, 0);
+          r.locidnb = l.length;
         });
 
         // Fit map view to data
-        this.fitMap(this.myEBirdData);
+        this.fitMap(this.myLocation);
       };
       reader.readAsText(event.target.files[0]);
     },
@@ -493,12 +463,13 @@ export default {
             region.code +
             "?fmt=json&key=vcs68p4j67pt"
         )
-        .then(
-          (response) =>
-            (this.hotspot = [
-              ...new Set([...this.hotspot, ...response.data]),
-            ].filter((e) => e.locId != null))
-        )
+        .then((response) => {
+          this.hotspot = [
+            ...new Set([...this.hotspot, ...response.data]),
+          ].filter((e) => e.locId != null);
+
+          response.data;
+        })
         .catch(function (error) {
           // handle error
           alert("Error with: " + region + ". " + error);
@@ -524,20 +495,8 @@ export default {
     },
   },
   computed: {
-    myLocation() {
-      return Array.from(new Set(this.myEBirdData.map((s) => s.locid))).map(
-        (locId) => {
-          let dataLocId = this.myEBirdData.filter((s) => s.locid === locId);
-          return {
-            locid: locId,
-            locname: dataLocId[0].locname,
-            lng: parseFloat(dataLocId[0].lng),
-            lat: parseFloat(dataLocId[0].lat),
-            subid: dataLocId.map((e) => e.subid),
-            region: dataLocId[0].region,
-          };
-        }
-      );
+    step() {
+      return 1 + (this.myLocation.length > 0) + (this.hotspot.length > 0);
     },
     myLocationGeojson() {
       return {
