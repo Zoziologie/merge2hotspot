@@ -8,7 +8,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import axios from "axios";
 import * as bootstrap from "bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
-
 //import iucn_CR from "./assets/iucn_CR.png"
 </script>
 
@@ -127,7 +126,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
                 <i class="bi bi-check-circle-fill me-2"></i>
                 <strong>Data loaded successfuly! </strong>
                 {{
-                  formatNb(myLocation.reduce((b, e) => b + e.subid.length, 0))
+                  formatNb(myLocation.reduce((b, e) => b + e.subId.length, 0))
                 }}
                 checklists over {{ formatNb(myLocation.length) }} locations.
                 <br />
@@ -145,7 +144,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
             </p>
             <ul class="list-group">
               <li
-                v-for="r in region.filter((e) => e.subidnb > 0)"
+                v-for="r in region.filter((e) => e.subIdNb > 0)"
                 :key="r.code"
                 class="list-group-item d-flex justify-content-between align-items-start px-1 py-1"
               >
@@ -154,11 +153,11 @@ import "bootstrap-icons/font/bootstrap-icons.css";
                     {{ r.name }}
                   </span>
                   <span class="badge bg-secondary pill ms-2"
-                    >{{ formatNb(r.locidnb) }}
+                    >{{ formatNb(r.locIdNb) }}
                     <i class="bi bi-pin"></i>
                   </span>
                   <span class="badge bg-secondary pill ms-2"
-                    >{{ formatNb(r.subidnb) }}
+                    >{{ formatNb(r.subIdNb) }}
                     <i class="bi bi-card-checklist"></i>
                   </span>
                 </div>
@@ -191,7 +190,22 @@ import "bootstrap-icons/font/bootstrap-icons.css";
             id="merge"
             role="tabpanel"
             aria-labelledby="merge-tab"
-          ></div>
+          >
+            <thead>
+              <tr>
+                <!-- loop through each value of the fields to get the table header -->
+                <th v-for="f in tableField" :key="f.key">
+                  {{ f.name }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Loop through the list get the each student data -->
+              <tr v-for="d in tableData" :key="d.locId">
+                <td v-for="f in tableField" :key="f.key">{{ d[f.key] }}</td>
+              </tr>
+            </tbody>
+          </div>
         </div>
         <div class="row">
           <div class="d-grid gap-2 col-6 mx-auto">
@@ -355,6 +369,21 @@ export default {
       loadingMyeBirdData: false,
       hotspot: [],
       region: [],
+      tableField: [
+        {
+          key: "locname",
+          name: "Name",
+        },
+        {
+          key: "region",
+          name: "Region",
+        },
+        {
+          key: "subIdNb",
+          name: '#<i class="bi bi-card-checklist"></i>',
+        },
+      ],
+      tableSort: [],
     };
   },
   methods: {
@@ -383,8 +412,8 @@ export default {
           "State/Province",
         ];
         const headersName = [
-          "subid",
-          "locid",
+          "subId",
+          "locId",
           "locname",
           "lng",
           "lat",
@@ -417,20 +446,20 @@ export default {
 
         // Get unique checklist level data
         const myChecklist = [
-          ...new Map(myEBirdData.map((item) => [item.subid, item])).values(),
+          ...new Map(myEBirdData.map((item) => [item.subId, item])).values(),
         ].filter((e) => !isNaN(e.lat) & !isNaN(e.lng));
 
         this.myLocation = Array.from(
-          new Set(myChecklist.map((s) => s.locid))
+          new Set(myChecklist.map((s) => s.locId))
         ).map((locId) => {
-          let dataLocId = myChecklist.filter((s) => s.locid === locId);
+          let datalocId = myChecklist.filter((s) => s.locId === locId);
           return {
-            locid: locId,
-            locname: dataLocId[0].locname,
-            lng: parseFloat(dataLocId[0].lng),
-            lat: parseFloat(dataLocId[0].lat),
-            subid: dataLocId.map((e) => e.subid),
-            region: dataLocId[0].region,
+            locId: locId,
+            locname: datalocId[0].locname,
+            lng: parseFloat(datalocId[0].lng),
+            lat: parseFloat(datalocId[0].lat),
+            subId: datalocId.map((e) => e.subId),
+            region: datalocId[0].region,
           };
         });
 
@@ -441,8 +470,8 @@ export default {
           const l = this.myLocation.filter(
             (s) => (s.region.split("-")[0] === r.code) | (s.region === r.code)
           );
-          r.subidnb = l.reduce((b, e) => b + e.subid.length, 0);
-          r.locidnb = l.length;
+          r.subIdNb = l.reduce((b, e) => b + e.subId.length, 0);
+          r.locIdNb = l.length;
         });
 
         // Fit map view to data
@@ -457,6 +486,7 @@ export default {
     },
     downloadRegion(region) {
       region.status = "loading";
+      //let self = this;
       axios
         .get(
           "https://ebird.org/ws2.0/ref/hotspot/" +
@@ -464,17 +494,7 @@ export default {
             "?fmt=json&key=vcs68p4j67pt"
         )
         .then((response) => {
-          this.hotspot = [
-            ...new Set([...this.hotspot, ...response.data]),
-          ].filter((e) => e.locId != null);
-
-          response.data;
-        })
-        .catch(function (error) {
-          // handle error
-          alert("Error with: " + region + ". " + error);
-        })
-        .then(() => {
+          this.hotspot = [...new Set([...this.hotspot, ...response.data])];
           region.status = "downloaded";
         });
     },
@@ -507,7 +527,7 @@ export default {
           return {
             type: "Feature",
             properties: {
-              id: "location-" + e.locid,
+              id: "location-" + e.locId,
             },
             geometry: {
               coordinates: [e.lng, e.lat, 0],
@@ -536,7 +556,23 @@ export default {
         }),
       };
     },
-    runMerge() {},
+    tableData() {
+      const locId = this.hotspot.map((d) => d.locId);
+      const reg = this.region
+        .filter((r) => r.status == "downloaded")
+        .map((r) => r.code);
+
+      return this.myLocation
+        .filter(
+          (s) =>
+            (reg.includes(s.region) | reg.includes(s.region.split("-")[0])) &
+            !locId.includes(s.locId)
+        )
+        .map((s) => {
+          s.subIdNb = s.subId.length;
+          return s;
+        });
+    },
   },
   mounted() {
     axios
