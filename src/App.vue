@@ -1,5 +1,6 @@
 <script setup>
-import { MapboxMap, MapboxMarker, MapboxCluster } from "@studiometa/vue-mapbox-gl";
+import { MapboxMap, MapboxMarker, MapboxCluster, MapboxPopup } from "@studiometa/vue-mapbox-gl";
+import { ref, nextTick } from "vue";
 import "mapbox-gl/dist/mapbox-gl.css";
 import axios from "axios";
 import * as bootstrap from "bootstrap";
@@ -81,8 +82,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
         <div class="tab-content flex-grow-1 overflow-auto">
           <div class="tab-pane px-3 py-3 active" id="import" role="tabpanel" aria-labelledby="import-tab">
             <p>
-              Import your my eBird data (<code>MyEBirdData.csv</code>) which you can
-              <a href="https://ebird.org/downloadMyData" target="_blank"> request from the ebird website </a>:
+              Start by import your my eBird data (<code>MyEBirdData.csv</code>) which you can
+              <a href="https://ebird.org/downloadMyData" target="_blank"> request from the eBird website </a>:
             </p>
             <label class="w-100 mb-3">
               <input type="file" class="form-control" accept=".csv" @change="processMyeBirdDataFile" />
@@ -120,7 +121,18 @@ import "bootstrap-icons/font/bootstrap-icons.css";
             </div>
           </div>
           <div class="tab-pane px-3 py-3" id="hotspot" role="tabpanel" aria-labelledby="hotspot-tab">
-            <p>Download the eBird hotspots for the region(s) you want to check.</p>
+            <p>
+              Then, we need to load the existing eBird hotspots for the region(s) for which you want to check your
+              personal location.
+            </p>
+            <div class="alert alert-success" role="alert" v-if="step == 3">
+              <i class="bi bi-check-circle-fill me-2"></i>
+              <strong>Hotspot loaded successfuly! </strong>
+              Select more region(s) or move to the final step
+              <button type="button" class="btn btn-sm btn-outline-primary my-1" @click="navTabActivate('merge')">
+                <small>3. Merge</small>
+              </button>
+            </div>
             <ul class="list-group">
               <li
                 v-for="r in region.filter((e) => e.subIdNb > 0)"
@@ -131,8 +143,16 @@ import "bootstrap-icons/font/bootstrap-icons.css";
                   <span class="fw-bold">
                     {{ r.name }}
                   </span>
-                  <span class="badge bg-secondary pill ms-2"
+                  <span v-if="r.status != 'downloaded'" class="badge bg-secondary pill ms-2"
                     >{{ formatNb(r.locIdNb) }}
+                    <i class="bi bi-pin"></i>
+                  </span>
+                  <span v-if="r.status == 'downloaded'" class="badge bg-danger pill ms-2"
+                    >{{ formatNb(r.locIdNb - r.locPerNb) }}
+                    <i class="bi bi-pin"></i>
+                  </span>
+                  <span v-if="r.status == 'downloaded'" class="badge bg-primary pill ms-2"
+                    >{{ formatNb(r.locPerNb) }}
                     <i class="bi bi-pin"></i>
                   </span>
                   <span class="badge bg-secondary pill ms-2"
@@ -179,31 +199,49 @@ import "bootstrap-icons/font/bootstrap-icons.css";
             </ul>
           </div>
         </div>
-        <div class="row">
-          <div class="d-grid gap-2 col-6 mx-auto" v-if="step == 3">
-            Move to the next step
-            <button type="button" class="btn btn-sm btn-outline-primary my-1" @click="navTabActivate('merge')">
-              <small>3. Merge</small>
-            </button>
-          </div>
-        </div>
       </div>
       <div class="col flex-grow-1" @shown="reloadMap()">
         <MapboxMap
           map-style="mapbox://styles/mapbox/streets-v11"
           class="h-100"
+          :center="mapCenter"
           access-token="pk.eyJ1IjoicmFmbnVzcyIsImEiOiIzMVE1dnc0In0.3FNMKIlQ_afYktqki-6m0g"
           @mb-created="(mapInstance) => (map = mapInstance)"
         >
-          <MapboxMarker v-for="m in myPersonalLocation" :key="m.locId" :lng-lat="[m.lng, m.lat]" />
+          <MapboxPopup
+            v-if="popupIsOpen"
+            :key="popupPosition.join('-')"
+            :lng-lat="popupPosition"
+            anchor="bottom"
+            @mb-close="() => (popupIsOpen = false)"
+          >
+            <pre>{{ popupContent }}</pre>
+          </MapboxPopup>
           <MapboxCluster
             v-if="hotspot.length > 0"
             :data="hotspotGeojson"
+            :clusterRadius="30"
             :clustersPaint="{
-              'circle-color': '#cc451c',
+              'circle-color': '#dc3545',
               'circle-radius': 20,
             }"
+            :unclusteredPointPaint="{ 'circle-color': '#dc3545', 'circle-radius': 10 }"
+            @mb-feature-click="openPopup"
           />
+          <MapboxCluster
+            v-else-if="myLocation.length > 0"
+            :data="myLocationGeojson"
+            :clusterRadius="30"
+            :clustersPaint="{
+              'circle-color': '#858585',
+              'circle-radius': 20,
+            }"
+            :unclusteredPointPaint="{ 'circle-color': '#858585', 'circle-radius': 10 }"
+            @mb-feature-click="openPopup"
+          />
+          <MapboxMarker v-for="m in myPersonalLocation" :key="m.locId" :lng-lat="[m.lng, m.lat]" popup>
+            <template v-slot:popup> {{ m }} </template>
+          </MapboxMarker>
         </MapboxMap>
       </div>
     </div>
@@ -284,6 +322,10 @@ export default {
   data() {
     return {
       map: null,
+      mapCenter: [0, 0],
+      popupIsOpen: false,
+      popupPosition: [0, 0],
+      popupContent: "",
       myLocation: [],
       loadingMyeBirdDataStatus: null,
       hotspot: [],
@@ -390,6 +432,14 @@ export default {
           response.data.Longitude = parseFloat(response.data.Longitude);
           this.hotspot = [...new Set([...this.hotspot, ...response.data])];
           region.status = "downloaded";
+
+          const locId = response.data.map((d) => d.locId);
+          region.locPerNb = this.myLocation.filter(
+            (s) =>
+              (region.code.includes(s.region) | region.code.includes(s.region.split("-")[0])) & !locId.includes(s.locId)
+          ).length;
+
+          this.fitMap(this.hotspot);
         });
     },
     fitMap(l) {
@@ -415,48 +465,27 @@ export default {
         Math.cos(radlat1) * Math.cos(radlat2) * Math.cos((Math.PI * (lon1 - lon2)) / 180);
       return ((Math.acos(Math.min(dist, 1)) * 180) / Math.PI) * 60 * 1.1515 * 1.609344;
     },
+    async openPopup({ geometry, properties }) {
+      await nextTick();
+      this.popupPosition = [...geometry.coordinates];
+      this.popupIsOpen = true;
+
+      console.log(properties);
+      this.popupContent = Object.fromEntries(
+        Object.entries(properties).map(([key, value]) => {
+          try {
+            return [key, JSON.parse(value)];
+          } catch (err) {
+            // Silence is golden.
+          }
+          return [key, value];
+        })
+      );
+    },
   },
   computed: {
     step() {
       return 1 + (this.myLocation.length > 0) + (this.hotspot.length > 0);
-    },
-    myPersonalLocationGeojson() {
-      return {
-        name: "NewFeatureType",
-        type: "FeatureCollection",
-        id: "jksdf",
-        features: this.myLocation.map((e) => {
-          return {
-            type: "Feature",
-            properties: {
-              id: "location-" + e.locId,
-            },
-            geometry: {
-              coordinates: [e.lng, e.lat, 0],
-              type: "Point",
-            },
-          };
-        }),
-      };
-    },
-    hotspotGeojson() {
-      return {
-        name: "NewFeatureTypesdss",
-        type: "FeatureCollection",
-        id: "dsds",
-        features: this.hotspot.map((e) => {
-          return {
-            type: "Feature",
-            properties: {
-              id: "hotspot-" + e.locId,
-            },
-            geometry: {
-              coordinates: [e.lng, e.lat, 0],
-              type: "Point",
-            },
-          };
-        }),
-      };
     },
     myPersonalLocation() {
       // Filter non-hotspot location from the region
@@ -478,6 +507,51 @@ export default {
           s.closestHotspot = tmp[1];
           return s;
         });
+    },
+    myLocationGeojson() {
+      return {
+        type: "FeatureCollection",
+        features: this.myLocation.map((e) => {
+          return {
+            type: "Feature",
+            properties: e,
+            geometry: {
+              coordinates: [e.lng, e.lat, 0],
+              type: "Point",
+            },
+          };
+        }),
+      };
+    },
+    myPersonalLocationGeojson() {
+      return {
+        type: "FeatureCollection",
+        features: this.myPersonalLocation.map((e) => {
+          return {
+            type: "Feature",
+            properties: e,
+            geometry: {
+              coordinates: [e.lng, e.lat, 0],
+              type: "Point",
+            },
+          };
+        }),
+      };
+    },
+    hotspotGeojson() {
+      return {
+        type: "FeatureCollection",
+        features: this.hotspot.map((e) => {
+          return {
+            type: "Feature",
+            properties: e,
+            geometry: {
+              coordinates: [e.lng, e.lat, 0],
+              type: "Point",
+            },
+          };
+        }),
+      };
     },
   },
   mounted() {
