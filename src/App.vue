@@ -15,6 +15,13 @@ import "bootstrap-icons/font/bootstrap-icons.css";
         <div class="row mx-2 my-1">
           <div class="col"><h3>Merge2Hotspot</h3></div>
           <div class="col text-end align-middle">
+            <a
+              type="button"
+              class="btn btn-outline-secondary btn-sm align-middle me-2"
+              href="https://github.com/Zoziologie/merge2hotspot"
+            >
+              <i class="bi bi-github"></i>
+            </a>
             <button
               type="button"
               class="btn btn-primary btn-sm align-middle"
@@ -27,7 +34,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
         </div>
 
         <!-- Nav tabs -->
-        <ul class="nav nav-tabs nav-fill" id="mainTab" role="tablist">
+        <ul class="nav nav-tabs nav-fill px-1" id="mainTab" role="tablist">
           <li class="nav-item" role="presentation">
             <button
               class="nav-link active"
@@ -186,14 +193,23 @@ import "bootstrap-icons/font/bootstrap-icons.css";
                   <small
                     ><span class="fw-bold"> {{ d.region }} </span></small
                   >
+                  <button
+                    class="btn btn-sm btn-outline-success ms-2 py-0"
+                    @click="map.flyTo({ center: [d.lng, d.lat], zoom: 11 })"
+                  >
+                    <i class="bi bi-pin-map-fill"></i>
+                  </button>
                   <span class="badge bg-secondary pill ms-2"
                     >{{ formatNb(d.subIdNb) }}
                     <i class="bi bi-card-checklist"></i>
                   </span>
-                  <span class="badge bg-secondary pill ms-2"
-                    >{{ formatNb(d.closestHotspot.dist) }} km
-                    <i class="bi bi-pin"></i>
-                  </span>
+                  <a
+                    :href="'https://ebird.org/mylocations/edit/' + d.locId"
+                    target="_blank"
+                    class="btn btn-sm btn-outline-primary align-self-center ms-2 py-0"
+                  >
+                    Edit location
+                  </a>
                 </div>
               </li>
             </ul>
@@ -204,7 +220,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
         <MapboxMap
           map-style="mapbox://styles/mapbox/streets-v11"
           class="h-100"
-          :center="mapCenter"
+          :center="[0, 0]"
+          :zoom="1"
           access-token="pk.eyJ1IjoicmFmbnVzcyIsImEiOiIzMVE1dnc0In0.3FNMKIlQ_afYktqki-6m0g"
           @mb-created="(mapInstance) => (map = mapInstance)"
         >
@@ -215,7 +232,15 @@ import "bootstrap-icons/font/bootstrap-icons.css";
             anchor="bottom"
             @mb-close="() => (popupIsOpen = false)"
           >
-            <pre>{{ popupContent }}</pre>
+            <div class="d-flex align-self-center justify-content-between my-2">
+              <h5 class="d-inline mb-0">
+                <a :href="'https://ebird.org/hotspot/' + popupLoc.locId" target="_blank"> {{ popupLoc.locName }}</a>
+              </h5>
+              <span class="align-self-center badge bg-secondary pill py-1 ms-2"
+                >{{ formatNb(popupLoc.numSpeciesAllTime) }}
+                <i class="bi bi-binoculars-fill"></i>
+              </span>
+            </div>
           </MapboxPopup>
           <MapboxCluster
             v-if="hotspot.length > 0"
@@ -240,7 +265,28 @@ import "bootstrap-icons/font/bootstrap-icons.css";
             @mb-feature-click="openPopup"
           />
           <MapboxMarker v-for="m in myPersonalLocation" :key="m.locId" :lng-lat="[m.lng, m.lat]" popup>
-            <template v-slot:popup> {{ m }} </template>
+            <template v-slot:popup>
+              <div class="d-flex justify-content-between my-2">
+                <h3 class="d-inline mb-0 align-self-center">
+                  {{ m.locname }}
+                </h3>
+                <a
+                  :href="'https://ebird.org/mylocations/edit/' + m.locId"
+                  target="_blank"
+                  class="btn btn-sm btn-outline-primary align-self-center ms-2"
+                >
+                  Edit location
+                </a>
+              </div>
+              <div class="d-flex mt-2">
+                <a :href="'https://ebird.org/checklist/' + c" v-for="c in m.subId" :key="c" target="_blank">
+                  <span class="align-self-center badge bg-primary pill py-1 pe-2"
+                    >{{ c }}
+                    <i class="bi bi-card-checklist"></i>
+                  </span>
+                </a>
+              </div>
+            </template>
           </MapboxMarker>
         </MapboxMap>
       </div>
@@ -322,10 +368,9 @@ export default {
   data() {
     return {
       map: null,
-      mapCenter: [0, 0],
       popupIsOpen: false,
       popupPosition: [0, 0],
-      popupContent: "",
+      popupLoc: {},
       myLocation: [],
       loadingMyeBirdDataStatus: null,
       hotspot: [],
@@ -469,18 +514,7 @@ export default {
       await nextTick();
       this.popupPosition = [...geometry.coordinates];
       this.popupIsOpen = true;
-
-      console.log(properties);
-      this.popupContent = Object.fromEntries(
-        Object.entries(properties).map(([key, value]) => {
-          try {
-            return [key, JSON.parse(value)];
-          } catch (err) {
-            // Silence is golden.
-          }
-          return [key, value];
-        })
-      );
+      this.popupLoc = properties;
     },
   },
   computed: {
