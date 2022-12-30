@@ -168,7 +168,6 @@ function processFile(file, size) {
 	Papa.parse(file, {
 		header: true,
 		step: function (row, handler) {
-
 			data.push(row.data);
 			/*progress = progress + Object.values(row.data[0]).join(',').length;
 
