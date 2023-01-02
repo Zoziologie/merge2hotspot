@@ -1,1 +1,5 @@
 @import "node_modules/bootstrap/scss/bootstrap";
+
+.mapboxgl-popup-content {
+  font-size: var(--bs-body-font-size) !important;
+}
