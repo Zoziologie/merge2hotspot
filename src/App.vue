@@ -576,21 +576,23 @@ export default {
     downloadRegion(region) {
       region.status = "loading";
       //let self = this;
-      fetch(
-        "https://ebird.org/ws2.0/ref/hotspot/" + region.code + "?fmt=json&key=vcs68p4j67pt"
-      ).then((response) => {
-        response.data.Latitude = parseFloat(response.data.Latitude);
-        response.data.Longitude = parseFloat(response.data.Longitude);
-        this.hotspot = [...new Set([...this.hotspot, ...response.data])];
-        region.status = "downloaded";
+      fetch("https://ebird.org/ws2.0/ref/hotspot/" + region.code + "?fmt=json&key=vcs68p4j67pt")
+        .then((response) => {
+          return response.json();
+        })
+        .then((json) => {
+          json.Latitude = parseFloat(json.Latitude);
+          json.Longitude = parseFloat(json.Longitude);
+          this.hotspot = [...new Set([...this.hotspot, ...json])];
+          region.status = "downloaded";
 
-        const locId = response.data.map((d) => d.locId);
-        region.locPerNb = this.myLocation.filter(
-          (s) => (region.code == s.region) & !locId.includes(s.locId)
-        ).length;
+          const locId = json.map((d) => d.locId);
+          region.locPerNb = this.myLocation.filter(
+            (s) => (region.code == s.region) & !locId.includes(s.locId)
+          ).length;
 
-        this.fitMap(this.hotspot);
-      });
+          this.fitMap(this.hotspot);
+        });
     },
     fitMap(l) {
       // Fit map view to data
@@ -709,18 +711,29 @@ export default {
     },
   },
   mounted() {
-    fetch("https://api.ebird.org/v2/ref/region/list/country/world?key=vcs68p4j67pt").then(
-      (response) => {
-        response.data = response.data.filter(function (obj) {
-          return !["US", "CA"].includes(obj.code);
-        });
-        this.region = [...this.region, ...response.data];
-        fetch("https://api.ebird.org/v2/ref/region/list/subnational1/US?key=vcs68p4j67pt").then(
-          (response) => {
-            this.region = [...this.region, ...response.data];
-            fetch("https://api.ebird.org/v2/ref/region/list/subnational1/CA?key=vcs68p4j67pt").then(
-              (response) => {
-                this.region = [...this.region, ...response.data]
+    fetch("https://api.ebird.org/v2/ref/region/list/country/world?key=vcs68p4j67pt")
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        this.region = [
+          ...this.region,
+          ...json.filter(function (obj) {
+            return !["US", "CA"].includes(obj.code);
+          }),
+        ];
+        fetch("https://api.ebird.org/v2/ref/region/list/subnational1/US?key=vcs68p4j67pt")
+          .then((response) => {
+            return response.json();
+          })
+          .then((json) => {
+            this.region = [...this.region, ...json];
+            fetch("https://api.ebird.org/v2/ref/region/list/subnational1/CA?key=vcs68p4j67pt")
+              .then((response) => {
+                return response.json();
+              })
+              .then((json) => {
+                this.region = [...this.region, ...json]
                   .sort((a, b) => (a.name > b.name ? 1 : -1))
                   .map((e) => {
                     e.status = null;
