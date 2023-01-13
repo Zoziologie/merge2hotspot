@@ -2,7 +2,6 @@
 import { MapboxMap, MapboxMarker, MapboxCluster, MapboxPopup } from "@studiometa/vue-mapbox-gl";
 import { ref, nextTick } from "vue";
 import "mapbox-gl/dist/mapbox-gl.css";
-import axios from "axios";
 import * as bootstrap from "bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 //import iucn_CR from "./assets/iucn_CR.png"
@@ -577,21 +576,21 @@ export default {
     downloadRegion(region) {
       region.status = "loading";
       //let self = this;
-      axios
-        .get("https://ebird.org/ws2.0/ref/hotspot/" + region.code + "?fmt=json&key=vcs68p4j67pt")
-        .then((response) => {
-          response.data.Latitude = parseFloat(response.data.Latitude);
-          response.data.Longitude = parseFloat(response.data.Longitude);
-          this.hotspot = [...new Set([...this.hotspot, ...response.data])];
-          region.status = "downloaded";
+      fetch(
+        "https://ebird.org/ws2.0/ref/hotspot/" + region.code + "?fmt=json&key=vcs68p4j67pt"
+      ).then((response) => {
+        response.data.Latitude = parseFloat(response.data.Latitude);
+        response.data.Longitude = parseFloat(response.data.Longitude);
+        this.hotspot = [...new Set([...this.hotspot, ...response.data])];
+        region.status = "downloaded";
 
-          const locId = response.data.map((d) => d.locId);
-          region.locPerNb = this.myLocation.filter(
-            (s) => (region.code == s.region) & !locId.includes(s.locId)
-          ).length;
+        const locId = response.data.map((d) => d.locId);
+        region.locPerNb = this.myLocation.filter(
+          (s) => (region.code == s.region) & !locId.includes(s.locId)
+        ).length;
 
-          this.fitMap(this.hotspot);
-        });
+        this.fitMap(this.hotspot);
+      });
     },
     fitMap(l) {
       // Fit map view to data
@@ -710,29 +709,29 @@ export default {
     },
   },
   mounted() {
-    axios
-      .get("https://api.ebird.org/v2/ref/region/list/country/world?key=vcs68p4j67pt")
-      .then((response) => {
+    fetch("https://api.ebird.org/v2/ref/region/list/country/world?key=vcs68p4j67pt").then(
+      (response) => {
         response.data = response.data.filter(function (obj) {
           return !["US", "CA"].includes(obj.code);
         });
         this.region = [...this.region, ...response.data];
-        axios
-          .get("https://api.ebird.org/v2/ref/region/list/subnational1/US?key=vcs68p4j67pt")
-          .then((response) => {
+        fetch("https://api.ebird.org/v2/ref/region/list/subnational1/US?key=vcs68p4j67pt").then(
+          (response) => {
             this.region = [...this.region, ...response.data];
-            axios
-              .get("https://api.ebird.org/v2/ref/region/list/subnational1/CA?key=vcs68p4j67pt")
-              .then((response) => {
+            fetch("https://api.ebird.org/v2/ref/region/list/subnational1/CA?key=vcs68p4j67pt").then(
+              (response) => {
                 this.region = [...this.region, ...response.data]
                   .sort((a, b) => (a.name > b.name ? 1 : -1))
                   .map((e) => {
                     e.status = null;
                     return e;
                   });
-              });
-          });
-      });
+              }
+            );
+          }
+        );
+      }
+    );
   },
 };
 </script>
