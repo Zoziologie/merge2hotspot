@@ -30,6 +30,9 @@ jobs:
           cache: npm
 
       - name: Install and Build
+        env:
+          VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN }}
+          VITE_EBIRD_API_KEY: ${{ secrets.VITE_EBIRD_API_KEY }}
         run: npm ci && npm run build
 
       - name: Upload Artifact
