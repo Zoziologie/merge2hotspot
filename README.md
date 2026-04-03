@@ -34,8 +34,8 @@ Find existing eBird hotspots for your personal locations and review which checkl
 
 The app expects these values at build time:
 
-- `VITE_MAPBOX_TOKEN`
-- `VITE_EBIRD_API_KEY`
+- `MAPBOX_ACCESS_TOKEN`
+- `EBIRD_API_KEY`
 
 Use `.env.local` for local development. Do not commit it.
 
@@ -45,8 +45,8 @@ The GitHub Actions workflow builds the app and deploys it to GitHub Pages.
 
 Set these repository or environment secrets:
 
-- `VITE_MAPBOX_TOKEN`
-- `VITE_EBIRD_API_KEY`
+- `MAPBOX_ACCESS_TOKEN`
+- `EBIRD_API_KEY`
 
 The workflow injects them during the build step so the static site can read them in the browser bundle.
 

@@ -31,8 +31,8 @@ jobs:
 
       - name: Install and Build
         env:
-          VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN }}
-          VITE_EBIRD_API_KEY: ${{ secrets.VITE_EBIRD_API_KEY }}
+          MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}
+          EBIRD_API_KEY: ${{ secrets.EBIRD_API_KEY }}
         run: npm ci && npm run build
 
       - name: Upload Artifact
